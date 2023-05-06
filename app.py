@@ -1,7 +1,7 @@
-
+from src.lifecycle import set_alive
 
 
 
 
 def start():
-  pass
+  set_alive()
