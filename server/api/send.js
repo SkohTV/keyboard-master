@@ -10,7 +10,7 @@ mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopo
 	.catch(err => console.error('Could not connect to MongoDB...', err));
 
 
-module.exports = async (req, res) => {
+	export default async function send(req, res){
 	res.status(200).send("Hello")
 	//const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
 	//let data = null;

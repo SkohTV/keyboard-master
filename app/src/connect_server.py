@@ -11,7 +11,7 @@ from src.structs import User
 
 
 def send(type: str, user: User, data: dict):
-	url = os.getenv("SERVER_URL") + "/send"
+	url = os.getenv("SERVER_URL") + "/api/send"
 
 	if user == None:
 		user = "null"
