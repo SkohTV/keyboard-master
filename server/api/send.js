@@ -51,7 +51,7 @@ export default async function send(req, res){
 				const gamemodes = pack.gamemodes.split("-")
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
 				const manySentences = dataDB[Math.floor(Math.random() * dataDB.length)]
-				const sentence = manySentences[Math.floor(Math.random() * manySentences.length)]
+				const sentence = manySentences.sentences[Math.floor(Math.random() * manySentences.length)]
 				console.log(manySentences, sentence)
 				returnValue = sentence ; break ;
 		} res.status(201).send(returnValue);
