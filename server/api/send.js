@@ -19,7 +19,7 @@ export default async function send(req, res){
 		switch (type){
 			case 'CreateUser':
 				hashedPwd = await encryptPassword(pack.rawPwd);
-				dataDB = await Users.findOne({'name': pack.name});
+				dataDB = await Users.find({'name': pack.name});
 				if (dataDB.length){ returnValue = 'Denied' ; break ; }
 
 				data = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
@@ -28,7 +28,7 @@ export default async function send(req, res){
 				returnValue = hashedPwd ; break ;
 
 			case 'LoginUser':
-				dataDB = await Users.findOne({'name': pack.name});
+				dataDB = await Users.find({'name': pack.name});
 				if (dataDB.length){ returnValue = 'Denied' ; break ; }
 				allow = await comparePassword(pack.rawPwd, dataDB[0].hashedPwd);
 				returnValue = allow ? dataDB[0].hashedPwd : 'Denied' ; break ;
@@ -41,7 +41,7 @@ export default async function send(req, res){
 
 			case 'LeaveMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				dataDB = await Users.deleteOne({'name': user.name});
+				dataDB = await Users.delete({'name': user.name});
 				await data.save();
 				returnValue = 'Allowed' ; break ;
 		} res.status(201).send(returnValue);

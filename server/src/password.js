@@ -18,6 +18,6 @@ export async function comparePassword(password, hash) {
 
 // Check if a hashed password is the same as the one in database
 export async function verifPassword(name, hash){
-  const dataDB = await Users.findOne({'name': name});
+  const dataDB = await Users.find({'name': name});
   return dataDB[0].hashedPwd === hash;
 }
