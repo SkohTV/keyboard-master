@@ -12,7 +12,7 @@ import Users from './src/models/users.js';
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 const dbUrl = process.env.MONGO_USER;
 
 
@@ -64,24 +64,6 @@ app.post('/send', async (req, res) => {
 	catch (err) {
 		console.error(err);
 		res.status(500).send('Internal server error');
-	}
-});
-
-app.get('/request', async (req, res) => {
-	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
-	let data = null;
-
-	try {
-		switch (type){
-			case 'JSP': 
-				const data = await Data.find();
-				res.send(data);
-		}
-	}
-
-	catch (err) {
-			console.error(err);
-			res.status(500).send('Internal server error');
 	}
 });
 
