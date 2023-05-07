@@ -29,7 +29,7 @@ export default async function send(req, res){
 
 			case 'LoginUser':
 				dataDB = await Users.find({'name': pack.name});
-				if (dataDB.length){ returnValue = 'Denied' ; break ; }
+				if (!dataDB.length){ returnValue = 'Denied' ; break ; }
 				allow = await comparePassword(pack.rawPwd, dataDB[0].hashedPwd);
 				returnValue = allow ? dataDB[0].hashedPwd : 'Denied' ; break ;
 
