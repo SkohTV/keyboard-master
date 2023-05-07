@@ -1,28 +1,16 @@
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import express from 'express';
 import mongoose from 'mongoose';
-
-import { comparePassword, encryptPassword } from './src/password.js';
-
 import Matchmaking from './src/models/matchmaking.js';
 import Sentences from './src/models/sentences.js';
 import Users from './src/models/users.js';
+import { comparePassword, encryptPassword } from './src/password.js';
 
 
-dotenv.config();
-const app = express();
-const port = 3000;
-const dbUrl = process.env.MONGO_USER;
-
-
-
-mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => console.log('Connected to MongoDB...'))
 	.catch(err => console.error('Could not connect to MongoDB...', err));
 
 
-app.post('/send', async (req, res) => {
+module.exports = async (req, res) => {
 	res.status(200).send("Hello")
 	//const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
 	//let data = null;
@@ -62,7 +50,4 @@ app.post('/send', async (req, res) => {
 	//	console.error(err);
 	//	res.status(500).send('Internal server error');
 	//}
-});
-
-
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+};
