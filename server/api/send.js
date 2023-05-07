@@ -42,7 +42,7 @@ export default async function send(req, res){
 
 			case 'LeaveMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				dataDB = await Matchmaking.deleteMany({'username': user.name}).remove();
+				dataDB = await Matchmaking.deleteMany({'username': user.name});
 				returnValue = 'Allowed' ; break ;
 
 			case 'QuerySentence':
