@@ -48,7 +48,7 @@ export default async function send(req, res){
 				returnValue = 'Allowed' ; break ;
 
 			case 'QuerySentence':
-				console.log(pack)
+				console.log(pack.gamemodes)
 				gamemodes = pack.gamemodes.split("-")
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
 				returnValue = dataDB ; break ;
