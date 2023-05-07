@@ -48,10 +48,11 @@ export default async function send(req, res){
 				returnValue = 'Allowed' ; break ;
 
 			case 'QuerySentence':
-				console.log(pack.gamemodes)
 				const gamemodes = pack.gamemodes.split("-")
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
-				returnValue = dataDB ; break ;
+				const manySentences = dataDB[Math.floor(Math.random() * dataDB.length)]
+				const sentence = manySentences[ath.floor(Math.random() * manySentences.length)]
+				returnValue = sentence ; break ;
 		} res.status(201).send(returnValue);
 	}
 
