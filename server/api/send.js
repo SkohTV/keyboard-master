@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
+
 import Matchmaking from '../src/models/matchmaking.js';
 import Sentences from '../src/models/sentences.js';
 import Users from '../src/models/users.js';
+
 import { comparePassword, encryptPassword, verifPassword } from '../src/password.js';
 
 
@@ -11,7 +13,6 @@ mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopo
 
 
 export default async function send(req, res){
-	console.log(req.body)
 	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
 	let data = null;
 	let returnValue, hashedPwd, dataDB, allow;
@@ -45,6 +46,11 @@ export default async function send(req, res){
 				dataDB = await Users.delete({'name': user.name});
 				await data.save();
 				returnValue = 'Allowed' ; break ;
+
+			case 'QuerySentence':
+				gamemodes = pack.gamemodes.split("-")
+				dataDB = await Sentences.find({"type": {$in: gamemodes}});
+				returnValue = dataDB ; break ;
 		} res.status(201).send(returnValue);
 	}
 

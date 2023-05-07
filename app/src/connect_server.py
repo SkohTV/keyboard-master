@@ -6,24 +6,34 @@ from src.structs import User
 from src.methods import export_gamemodes
 
 # La base de donnée est gérée côté serveur, en JS, afin de :
-# - Pouvoir gérer les autorisations d'écriture/lecture des utilisateurs ayant accès au code source
+# - Pouvoir gérer les autorisations des utilisateurs ayant accès au code source
 #	- Facilité de connection, mongoose (JS) est bien supérieur à pymongo (Python)
 
 
 
-def send(type: str, user: User, data: dict):
+def send(req: str, user: User, data: dict) -> requests.models.Response:
+	"""Envoi une requête vers le serveur, méthode privée utilisée via des interfaces\n
+
+	Args:
+		req (str): Type de requête\n
+		user (User): Utilisateur qui exécute la requête\n
+		data (dict): Données supplémentaires à envoyer\n
+
+	Returns:
+		requests.models.Response: Objet réponse à une requête via le module requests\n
+	"""
 	url = os.getenv("SERVER_URL") + "/api/send"
 
 	if user == None:
 		user_pack = "null"
 	else:
-		user_pack = {"name": user.name, "hashedPwd": user.hashed_password}
+		user_pack = json.dumps({"name": user.name, "hashedPwd": user.hashed_password})
 
 	if data == None:
 		data = "null"
 	
 	pack = {
-		"type": type,
+		"type": req,
 		"user": user_pack,
 		"pack": data
 	}
@@ -42,12 +52,12 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 		raw_password (str): Mot de passe pour s'y connecté (brute, non encrypté)\n
 
 	Returns:
-		User or None: Renvoi un objet User en cas de réussite, renvoi None sinon
+		User or None: Renvoi un objet User en cas de réussite, renvoi None sinon\n
 	"""
 	request = "CreateUser" if is_new else "LoginUser"
 
 	data = {"name": name, "rawPwd": raw_password}
-	res = send(type=request, user=None, data=json.dumps(data))
+	res = send(req=request, user=None, data=json.dumps(data))
 
 	if res.status_code != 201:
 		print(f"Erreur: {res.status_code} - {res.text}")
@@ -62,10 +72,19 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 
 
 
-def join_matchmaking(user: User, gamemodes: list):
-  data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
-  res = send(type="JoinMatchmaking", user=user, data=data)
-  return res.text
+def join_matchmaking(user: User, gamemodes: list) -> bool:
+	"""Envoi une demande pour rejoindre le service de matchmaking au serveur\n
+
+	Args:
+		user (User): Utilisateur qui envoi la requête\n
+		gamemodes (list): Liste de modes de jeu souhaités\n
+
+	Returns:
+		bool: True si demande acceptée par le serveur, sinon False\n
+	"""
+	data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
+	res = send(req="JoinMatchmaking", user=user, data=data)
+	return res.text == "Allowed"
 
 
 

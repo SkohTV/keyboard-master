@@ -28,5 +28,5 @@ def start():
 	#res = send(type="LoginUser", user=None, data=json.dumps(data))
 	user = connect(False, "Skoh", "abcde")
 	
-	res = join(user=user, gamemodes=["a","b","c"])
+	res = join(user=user, gamemodes=["easy","medium"])
 	print(res)
