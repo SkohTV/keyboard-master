@@ -93,5 +93,10 @@ def leave_matchmaking():
 
 
 
-def query_sentence():
-  pass
+def query_sentence(gamemodes: list):
+	data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
+	res = send(req="QuerySentence", user=None, data=data)
+	return res
+
+
+
