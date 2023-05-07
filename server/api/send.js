@@ -49,7 +49,7 @@ export default async function send(req, res){
 
 			case 'QuerySentence':
 				console.log(pack.gamemodes)
-				gamemodes = pack.gamemodes.split("-")
+				const gamemodes = pack.gamemodes.split("-")
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
 				returnValue = dataDB ; break ;
 		} res.status(201).send(returnValue);
