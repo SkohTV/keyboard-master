@@ -88,15 +88,32 @@ def join_matchmaking(user: User, gamemodes: list) -> bool:
 
 
 
-def leave_matchmaking():
-  pass
+def leave_matchmaking(user: User) -> bool:
+	"""Envoi une demande pour quitter le service de matchmaking au serveur\n
+
+	Args:
+		user (User): Utilisateur qui envoi la requête\n
+
+	Returns:
+		bool: True si demande acceptée par le serveur, sinon False\n
+	"""
+	res = send(req="JoinMatchmaking", user=user, data=None)
+	return res.text == "Allowed"
 
 
 
-def query_sentence(gamemodes: list):
+def query_sentence(gamemodes: list) -> str:
+	"""Envoi une demande au serveur pour obtenir une phrase pour le jeu selon la difficulté\n
+
+	Args:
+		gamemodes (list): Liste de difficultés acceptées\n
+
+	Returns:
+		str: Phrase pour le jeu\n
+	"""
 	data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
 	res = send(req="QuerySentence", user=None, data=data)
-	return res
+	return res.text
 
 
 
