@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import Matchmaking from './src/models/matchmaking.js';
-import Sentences from './src/models/sentences.js';
-import Users from './src/models/users.js';
-import { comparePassword, encryptPassword } from './src/password.js';
+import Matchmaking from '../src/models/matchmaking.js';
+import Sentences from '../src/models/sentences.js';
+import Users from '../src/models/users.js';
+import { comparePassword, encryptPassword } from '../src/password.js';
 
 
 mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopology: true })
