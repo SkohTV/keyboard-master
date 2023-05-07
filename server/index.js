@@ -16,10 +16,6 @@ const port = 3000;
 const dbUrl = process.env.MONGO_USER;
 
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-
 
 mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => console.log('Connected to MongoDB...'))
