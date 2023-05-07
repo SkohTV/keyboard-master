@@ -20,7 +20,6 @@ export default async function send(req, res){
 			case 'CreateUser':
 				hashedPwd = await encryptPassword(pack.rawPwd);
 				dataDB = await Users.findOne({'name': pack.name});
-
 				if (dataDB.length){ returnValue = 'Denied' ; break ; }
 
 				data = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
@@ -30,12 +29,12 @@ export default async function send(req, res){
 
 			case 'LoginUser':
 				dataDB = await Users.findOne({'name': pack.name});
+				if (dataDB.length){ returnValue = 'Denied' ; break ; }
 				allow = await comparePassword(pack.rawPwd, dataDB[0].hashedPwd);
 				returnValue = allow ? dataDB[0].hashedPwd : 'Denied' ; break ;
 
 			case 'JoinMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-
 				data = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
 				await data.save();
 				returnValue = 'Allowed' ; break ;
