@@ -2,27 +2,29 @@ import os
 import json
 
 from src.lifecycle import set_alive
-from src.database import send, receive
+from src.connect_server import user_connection as connect
 
 
 
 def start():
-  set_alive()
+	set_alive()
 
-  #data = {
-  #  "gamemodes": "agbqg"
-  #}
-  
-  data = {
-    "name": "Skoh",
-    "rawPwd": "abcde"
-  }
-  
-  user = {
-    "name": "Skoh",
-    "hashedPwd": ""
-  }
+	#data = {
+	#  "gamemodes": "agbqg"
+	#}
+	
+	data = {
+		"name": "Skoh",
+		"rawPwd": "abcde"
+	}
+	
+	#user = {
+	#	"name": "Skoh",
+	#	"hashedPwd": ""
+	#}
 
-  #res = send(type="JoinMatchmaking", user=json.dumps(user), data=json.dumps(data))
-  res = send(type="CreateUser", user=None, data=json.dumps(data))
-  print(res)
+	#res = send(type="JoinMatchmaking", user=json.dumps(user), data=json.dumps(data))
+	#res = send(type="CreateUser", user=None, data=json.dumps(data))
+	#res = send(type="LoginUser", user=None, data=json.dumps(data))
+	res = connect(False, "Skoh", "abcde")
+	print(res)

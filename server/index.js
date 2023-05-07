@@ -27,27 +27,39 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 
 
 app.post('/send', async (req, res) => {
-	console.log(req.body)
 	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
 	let data = null;
+	let returnValue, hashedPwd, dataDB, allow;
 
 	try {
 		switch (type){
 			case 'CreateUser':
-				
-				const dataDB = await Users.find();
-				const a = pack.rawPwd;
-				const b = encryptPassword(a);
-				console.log(a,b);
-				console.log(comparePassword(a,b));
+				hashedPwd = await encryptPassword(pack.rawPwd);
+				dataDB = await Users.find({'name': pack.name});
+
+				if (!dataDB.length){
+					data = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
+					await data.save();
+					returnValue = hashedPwd;
+					console.log(`Added user ${pack.name} to MongoDB database`);
+				} else {
+					returnValue = 'Denied';
+				}	break;
+
+			case 'LoginUser':
+				dataDB = await Users.find({'name': pack.name});
+				allow = await comparePassword(pack.rawPwd, dataDB[0].hashedPwd);
+				returnValue = allow ? dataDB[0].hashedPwd : 'Denied'
 				break;
 
 			case 'JoinMatchmaking':
 			case 'LeaveMatchmaking':
 				data = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
-				await data.save() ; break ;
-		} res.status(201).send('Data saved successfully');
-	} 
+				await data.save();
+				returnValue = 'Data saved successfully';
+				break;
+		} res.status(201).send(returnValue);
+	}
 
 	catch (err) {
 		console.error(err);
