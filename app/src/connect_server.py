@@ -13,16 +13,17 @@ from src.structs import User
 def send(type: str, user: User, data: dict):
 	url = os.getenv("SERVER_URL") + "/api/send"
 
-	user_pack = json.dumps({"name": user.name, "hashedPwd": user.hashed_password}) if user else "none"
-	data_pack = json.dumps(data) if data else "none"
+	if user == None:
+		user = "null"
 
+	if data == None:
+		data = "null"
+	
 	pack = {
 		"type": type,
 		"user": user,
 		"pack": data
 	}
-
-	print(pack)
 
 	response = requests.post(url, data=pack)
 	return response
@@ -43,7 +44,7 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 	request = "CreateUser" if is_new else "LoginUser"
 
 	data = {"name": name, "rawPwd": raw_password}
-	res = send(type=request, user=None, data=data)
+	res = send(type=request, user=None, data=json.dumps(data))
 
 	if res.status_code != 201:
 		print(f"Erreur: {res.status_code} - {res.text}")
@@ -58,9 +59,8 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 
 
 
-def join_matchmaking(user: User, gamemodes: str) -> bool:
-	res = send(type="JoinMatchmaking", user=user, data={"gamemodes": gamemodes})
-	return res == "Allowed"
+def join_matchmaking():
+  pass
 
 
 
