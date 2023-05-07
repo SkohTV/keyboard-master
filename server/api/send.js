@@ -50,9 +50,8 @@ export default async function send(req, res){
 			case 'QuerySentence':
 				const gamemodes = pack.gamemodes.split("-")
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
-				const manySentences = dataDB[Math.floor(Math.random() * dataDB.length)]
-				console.log(JSON.parse(manySentences), JSON.parse(manySentences).sentences)
-				const sentence = manySentences.sentences[Math.floor(Math.random() * manySentences.length)]
+				const manySentences = dataDB[Math.floor(Math.random() * dataDB.length)];
+				const sentence = manySentences.sentences[Math.floor(Math.random() * manySentences.sentences.length)]
 				returnValue = sentence ; break ;
 		} res.status(201).send(returnValue);
 	}
