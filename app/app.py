@@ -2,7 +2,7 @@ import os
 import json
 
 from src.lifecycle import set_alive
-from src.connect_server import user_connection as connect
+from src.connect_server import user_connection as connect, join_matchmaking as join
 
 
 
@@ -26,5 +26,7 @@ def start():
 	#res = send(type="JoinMatchmaking", user=json.dumps(user), data=json.dumps(data))
 	#res = send(type="CreateUser", user=None, data=json.dumps(data))
 	#res = send(type="LoginUser", user=None, data=json.dumps(data))
-	res = connect(False, "Skoh", "abcde")
+	user = connect(False, "Skoh", "abcde")
+	
+	res = join(user=user, gamemodes=["a","b","c"])
 	print(res)

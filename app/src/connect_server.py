@@ -3,6 +3,7 @@ import requests
 import json
 
 from src.structs import User
+from src.methods import export_gamemodes
 
 # La base de donnée est gérée côté serveur, en JS, afin de :
 # - Pouvoir gérer les autorisations d'écriture/lecture des utilisateurs ayant accès au code source
@@ -14,14 +15,16 @@ def send(type: str, user: User, data: dict):
 	url = os.getenv("SERVER_URL") + "/api/send"
 
 	if user == None:
-		user = "null"
+		user_pack = "null"
+	else:
+		user_pack = {"name": user.name, "hashedPwd": user.hashed_password}
 
 	if data == None:
 		data = "null"
 	
 	pack = {
 		"type": type,
-		"user": user,
+		"user": user_pack,
 		"pack": data
 	}
 
@@ -59,8 +62,10 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 
 
 
-def join_matchmaking():
-  pass
+def join_matchmaking(user: User, gamemodes: list):
+  data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
+  res = send(type="JoinMatchmaking", user=user, data=data)
+  return res.text
 
 
 
