@@ -26,5 +26,10 @@ def start():
 	#res = send(type="JoinMatchmaking", user=json.dumps(user), data=json.dumps(data))
 	#res = send(type="CreateUser", user=None, data=json.dumps(data))
 	#res = send(type="LoginUser", user=None, data=json.dumps(data))
-	res = connect(False, "Skoh", "abcde")
-	print(res)
+	user = connect(False, "Skoh", "abcde")
+
+	#res = join_matchmaking(type="JoinMatchmaking", user=json.dumps(user), data=json.dumps(data))
+	#res = send(type="CreateUser", user=None, data=json.dumps(data))
+	#res = send(type="LoginUser", user=None, data=json.dumps(data))
+	#res = connect(False, "Skoh", "abcde")
+	print(user)

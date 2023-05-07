@@ -11,7 +11,9 @@ mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopo
 
 
 export default async function send(req, res){
+	console.log(req.body.user)
 	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
+	console.log([type, user, pack])
 	let data = null;
 	let returnValue, hashedPwd, dataDB, allow;
 
