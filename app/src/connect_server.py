@@ -13,8 +13,8 @@ from src.structs import User
 def send(type: str, user: User, data: dict):
 	url = os.getenv("SERVER_URL") + "/api/send"
 
-	user_pack = {"name": user.name, "hashedPwd": user.hashed_password} if user else "null"
-	data_pack = data if data else "null"
+	user_pack = {"name": user.name, "hashedPwd": user.hashed_password} if user else "none"
+	data_pack = data if data else "none"
 
 	pack = {
 		"type": type,
