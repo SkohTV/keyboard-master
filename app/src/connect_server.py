@@ -97,7 +97,7 @@ def leave_matchmaking(user: User) -> bool:
 	Returns:
 		bool: True si demande acceptée par le serveur, sinon False\n
 	"""
-	res = send(req="JoinMatchmaking", user=user, data=None)
+	res = send(req="LeaveMatchmaking", user=user, data=None)
 	return res.text == "Allowed"
 
 
