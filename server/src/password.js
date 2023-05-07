@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-
+import mongoose from 'mongoose';
+import Users from './models/users.js';
 
 // Function to encrypt a password
 export async function encryptPassword(password) {
@@ -13,4 +14,10 @@ export async function encryptPassword(password) {
 export async function comparePassword(password, hash) {
   const result = await bcrypt.compare(password, hash);
   return result;
+}
+
+// Check if a hashed password is the same as the one in database
+export async function verifPassword(name, hash){
+  const dataDB = await Users.findOne({'name': name});
+  return dataDB[0].hashedPwd === hash;
 }

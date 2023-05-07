@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Matchmaking from '../src/models/matchmaking.js';
 import Sentences from '../src/models/sentences.js';
 import Users from '../src/models/users.js';
-import { comparePassword, encryptPassword } from '../src/password.js';
+import { comparePassword, encryptPassword, verifPassword } from '../src/password.js';
 
 
 mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -19,29 +19,32 @@ export default async function send(req, res){
 		switch (type){
 			case 'CreateUser':
 				hashedPwd = await encryptPassword(pack.rawPwd);
-				dataDB = await Users.find({'name': pack.name});
+				dataDB = await Users.findOne({'name': pack.name});
 
-				if (!dataDB.length){
-					data = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
-					await data.save();
-					returnValue = hashedPwd;
-					console.log(`Added user ${pack.name} to MongoDB database`);
-				} else {
-					returnValue = 'Denied';
-				}	break;
+				if (dataDB.length){ returnValue = 'Denied' ; break ; }
+
+				data = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
+				await data.save();
+				console.log(`Added user ${pack.name} to MongoDB database`);
+				returnValue = hashedPwd ; break ;
 
 			case 'LoginUser':
-				dataDB = await Users.find({'name': pack.name});
+				dataDB = await Users.findOne({'name': pack.name});
 				allow = await comparePassword(pack.rawPwd, dataDB[0].hashedPwd);
-				returnValue = allow ? dataDB[0].hashedPwd : 'Denied'
-				break;
+				returnValue = allow ? dataDB[0].hashedPwd : 'Denied' ; break ;
 
 			case 'JoinMatchmaking':
-			case 'LeaveMatchmaking':
+				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
+
 				data = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
 				await data.save();
-				returnValue = 'Data saved successfully';
-				break;
+				returnValue = 'Allowed' ; break ;
+
+			case 'LeaveMatchmaking':
+				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
+				dataDB = await Users.deleteOne({'name': user.name});
+				await data.save();
+				returnValue = 'Allowed' ; break ;
 		} res.status(201).send(returnValue);
 	}
 
