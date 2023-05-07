@@ -14,7 +14,6 @@ mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopo
 
 export default async function send(req, res){
 	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
-	let data = null;
 	let returnValue, hashedPwd, dataDB, allow;
 
 	try {
@@ -24,8 +23,8 @@ export default async function send(req, res){
 				dataDB = await Users.find({'name': pack.name});
 				if (dataDB.length){ returnValue = 'Denied' ; break ; }
 
-				data = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
-				await data.save();
+				dataDB = new Users({ 'name': pack.name, 'hashedPwd': hashedPwd });
+				await dataDB.save();
 				console.log(`Added user ${pack.name} to MongoDB database`);
 				returnValue = hashedPwd ; break ;
 
@@ -37,13 +36,13 @@ export default async function send(req, res){
 
 			case 'JoinMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				data = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
-				await data.save();
+				dataDB = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
+				await dataDB.save();
 				returnValue = 'Allowed' ; break ;
 
 			case 'LeaveMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				dataDB = await Matchmaking.find({'username': user.name}).remove();
+				dataDB = await Matchmaking.deleteMany({'username': user.name}).remove();
 				returnValue = 'Allowed' ; break ;
 
 			case 'QuerySentence':
