@@ -38,6 +38,8 @@ export default async function send(req, res){
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				dataDB = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
 				await dataDB.save();
+				await new Promise(r => setTimeout(r, 5000));
+				dataDB = await Matchmaking.find({})
 				returnValue = 'Allowed' ; break ;
 
 			case 'LeaveMatchmaking':

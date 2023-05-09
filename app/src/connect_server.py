@@ -1,9 +1,8 @@
-import os
 import requests
 import json
 
-from src.structs import User
-from src.methods import export_gamemodes
+from src.utils import User
+from src.utils import export_gamemodes
 
 # La base de donnée est gérée côté serveur, en JS, afin de :
 # - Pouvoir gérer les autorisations des utilisateurs ayant accès au code source

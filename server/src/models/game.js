@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
 
+//! Replace with int
 const scheme = new mongoose.Schema({
-	gamemodes: {type: String, required: true},
-	player1: {type: String, required: true},
-	player2: {type: String, required: true}
+	gameID: {type: Int16Array, required: true},
+	player1ms: {type: Float64Array, required: true},
+	player2ms: {type: Float64Array, required: true}
 });
 
 const Matchmaking = mongoose.model('Matchmaking', scheme, 'Matchmaking');

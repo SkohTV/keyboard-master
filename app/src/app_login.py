@@ -1,35 +1,32 @@
-import os
-import json
+import sys
 import tkinter as tk
-from time import sleep
+from _tkinter import TclError
 
 import ttkbootstrap as ttk
-from dotenv import load_dotenv
 
-from src.connect_server import user_connection as connect, join_matchmaking as join, leave_matchmaking as leave, query_sentence as query
+from src.connect_server import user_connection as connect
 
-
-
-
-#user = connect(False, "Skoh", "abcde")
-#print(join(user, ["easy", "insane"]))
-#sleep(2)
-#print(leave(user))
-#res = query(gamemodes=["easy","insane"])
-#print(res)
-
-		#self.geometry("700x400")
 
 
 class App_Login(tk.Tk):
 	def __init__(self) -> None:
+		"""Initialisation de l'objet"""
 		# On utilise l'init de l'objet Tkinter de base
 		tk.Tk.__init__(self)
 
+		# On attrape l'event de fermeture de la fenêtre, pour pouvoir clore le script
+		self.protocol("WM_DELETE_WINDOW", self.on_close)
+
 		# Change les paramètres basiques de la fenêtre
 		self.resizable(False, False)
-		#self.iconbitmap("./ico/keyboard.ico")
 		self.title("Login")
+
+		# Le chargement de l'icône peut échouer (si l'utilisateur est sous Linux par exemple)
+		# On va donc tenter de de set l'icône, et si ça échoue on passe à la suite
+		try:
+			self.iconbitmap("ico/keyboard.ico")
+		except TclError:
+			pass
 
 		# On crée quatre packs pour formatter l'affichage
 		frame1, frame2, frame3, frame4 = tk.Frame(self), tk.Frame(self), tk.Frame(self), tk.Frame(self)
@@ -67,20 +64,26 @@ class App_Login(tk.Tk):
 
 
 	def interface_login(self):
+		"""On fait une requête au serveur de connection"""
 		res = connect(False, self.entry_username.get(), self.entry_password.get())
 		if not res:
 			self.label_status.config(text="Identifiants invalides")
 		else:
 			self.label_status.config(text="Connection réussie ! Redirection...")
+			self.destroy()
 
 
 	def interface_register(self):
+		"""On fait une requête au serveur de création d'utilisateur"""
 		res = connect(True, self.entry_username.get(), self.entry_password.get())
 		if not res:
 			self.label_status.config(text="Ce username est déjà utilisé")
 		else:
 			self.label_status.config(text="Connection réussie ! Redirection...")
+			self.destroy()
 
 
-
-
+	def on_close(self):
+		"""Shutdown le programme Python lorsqu'on ferme la fenêtre, pour éviter d'ouvrir la fenêtre de jeu"""
+		self.destroy()
+		sys.exit()

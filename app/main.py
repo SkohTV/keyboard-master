@@ -1,4 +1,5 @@
-from app import App_Login
+from src.app_login import App_Login
+from src.app_main import App_Main
 
 # Q/A
 # Q: Pourquoi ne pas utiliser une variable globale pour la fenêtre tkinter ?
@@ -7,6 +8,11 @@ from app import App_Login
 
 
 
+# Ne s'exéctue que si main.py est lancé, pas importé
 if __name__ == "__main__":
-  app = App_Login()
-  app.mainloop()
+  # On lance la fenêtre de login
+  app_login = App_Login()
+  app_login.mainloop()
+  # Lorsqu'elle se ferme SANS faire un sys.exit, on lance la fenêtre de jeu
+  app_main = App_Main()
+  app_main.mainloop()
