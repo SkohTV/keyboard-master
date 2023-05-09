@@ -1,5 +1,4 @@
-import app
-
+from app import App_Login
 
 # Q/A
 # Q: Pourquoi ne pas utiliser une variable globale pour la fenêtre tkinter ?
@@ -9,4 +8,5 @@ import app
 
 
 if __name__ == "__main__":
-  app.start()
+  app = App_Login()
+  app.mainloop()

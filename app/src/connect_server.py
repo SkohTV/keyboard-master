@@ -22,7 +22,7 @@ def send(req: str, user: User, data: dict) -> requests.models.Response:
 	Returns:
 		requests.models.Response: Objet réponse à une requête via le module requests\n
 	"""
-	url = os.getenv("SERVER_URL") + "/api/send"
+	url = "http://keyboard-master.vercel.app" + "/api/send"
 
 	if user == None:
 		user_pack = "null"
