@@ -34,4 +34,10 @@ class App_Main(tk.Tk):
 		except TclError:
 			pass
 
+	#def show_frame(self, frame) -> None:
+	#	self.show_frame() # Maybe self.hide ?
 
+
+class Frame_Play(tk.Frame):
+	def __init_subclass__(cls) -> None:
+		return super().__init_subclass__()
