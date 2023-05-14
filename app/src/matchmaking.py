@@ -8,7 +8,7 @@ class CustomThread(th.Thread):
 	def __init__(self, user: User, gamemodes: list) -> None:
 		th.Thread.__init__(self)
 		self.user = user
-		self.gamemodes = export_gamemodes(gamemodes)
+		self.gamemodes = gamemodes
 		self.state = None
 		
 	def run(self) -> None:
