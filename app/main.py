@@ -21,7 +21,23 @@ from src.app_main import App_Main
 # TESTS
 
 import src.connect_server as c
+import threading as th
+import time
 
-#usr = c.user_connection(False, 'Skoh', 'abcde')
-usr = c.user_connection(False, 'Skoh2', 'abcd')
-c.join_matchmaking(usr, ['insane'])
+def a():
+  print("a started")
+  usr = c.user_connection(False, 'Skoh', 'abcde')
+  c.join_matchmaking(usr, ['easy', 'insane'])
+
+def b():
+  print("b started")
+  usr = c.user_connection(False, 'Skoh2', 'abcd')
+  c.join_matchmaking(usr, ['insane'])
+
+th.Thread(target=a).start()
+time.sleep(2)
+th.Thread(target=b).start()
+
+
+time.sleep(10)
+

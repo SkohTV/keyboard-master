@@ -42,7 +42,7 @@ export default async function send(req, res){
 				dataDB = await Matchmaking.findOne({'gamemodes': {$in: gamemodes}, 'player2': ''})
 				if (dataDB){
 					gameID = Math.floor(Math.random() * (999999999 - 100000000 + 1)) + 100000000;
-					gameDB = new Game({'gameID': gameID, 'player1': dataDB.palyer1, 'player2': dataDB.player2});
+					gameDB = new Game({'gameID': gameID, 'player1ms': 0, 'player2': 0});
 					dataDB.player2 = user.name;
 					dataDB.gameID = gameID;
 					await gameDB.save();
