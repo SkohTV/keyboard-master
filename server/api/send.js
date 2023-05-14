@@ -48,7 +48,7 @@ export default async function send(req, res){
 					await gameDB.save();
 					await dataDB.save();
 
-					const filteredGamemodes = dataDB.gamemodes.filter(x => pack.gamemodes.includes(x))
+					const filteredGamemodes = dataDB.gamemodes.filter(x => gamemodes.includes(x))
 					console.log(filteredGamemodes)
 					const sentenceDB = await Sentences.find({"type": {$in: filteredGamemodes[Math.floor(Math.random() * filteredGamemodes.length)]}});
 					console.log(sentenceDB)
