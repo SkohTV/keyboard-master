@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import Game from '../src/models/game.js';
 import Matchmaking from '../src/models/matchmaking.js';
 import Sentences from '../src/models/sentences.js';
 import Users from '../src/models/users.js';
@@ -15,7 +16,7 @@ mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopo
 
 export default async function send(req, res){
 	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
-	let returnValue, hashedPwd, dataDB, allow, gamemodes;
+	let returnValue, hashedPwd, dataDB, allow, gamemodes, gameDB, gameID;
 
 	try {
 		switch (type){
@@ -40,9 +41,13 @@ export default async function send(req, res){
 				gamemodes = unpackGamemodes(pack.gamemodes);
 				dataDB = await Matchmaking.findOne({'gamemodes': {$in: gamemodes}, 'player2': ''})
 				if (dataDB){
+					gameID = Math.floor(Math.random() * (999999999 - 100000000 + 1)) + 100000000;
+					gameDB = new Game({'gameID': gameID, 'player1': dataDB.palyer1, 'player2': dataDB.player2});
 					dataDB.player2 = user.name;
+					dataDB.gameID = gameID;
+					await gameDB.save();
 					await dataDB.save();
-					returnValue = 'Allowed';
+					returnValue = dataDB.gameID;
 					break;
 				}
 				dataDB = new Matchmaking({ 'gamemodes': gamemodes, 'player1': user.name, 'player2': ''});
@@ -50,7 +55,7 @@ export default async function send(req, res){
 				await new Promise(r => setTimeout(r, 5000));
 				dataDB = await Matchmaking.findOne({'player1': user.name})
 				if (dataDB.player2 != ''){
-					returnValue = 'Allowed';
+					returnValue = dataDB.gameID;
 					break;
 				}
 				dataDB = await Matchmaking.deleteMany({'username': user.name});
