@@ -25,6 +25,7 @@ import threading as th
 import time
 from src.matchmaking import CustomThread
 
+
 def a():
   print("a started")
   usr = c.user_connection(False, 'Skoh', 'abcde')
@@ -34,6 +35,14 @@ def a():
   print(myT.state)
   time.sleep(10)
   print(myT.state)
+  res = c.set_score(usr, myT.state, 300)
+  print(res)
+  time.sleep(2)
+  res = c.set_score(usr, myT.state, 150)
+  print(res)
+  time.sleep(2)
+  res = c.retrieve_data(usr, myT.state)
+  print(res)
 
 
 def b():

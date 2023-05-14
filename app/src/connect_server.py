@@ -130,3 +130,10 @@ def set_score(user: User, gameID: int, score: int) -> bool:
 	data = json.dumps({"gameID": gameID, "score": score})
 	res = send(req="SetScore", user=user, data=data)
 	return res.text == "Allowed"
+
+
+
+def retrieve_data(user: User, gameID: int):
+  data = json.dumps({"gameID": gameID})
+  res = send(req="RetrieveData", user=user, data=data)
+  return json.loads(res)
