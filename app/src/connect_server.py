@@ -116,3 +116,17 @@ def query_sentence(gamemodes: list) -> str:
 
 
 
+def set_score(user: User, gameID: int, score: int) -> bool:
+	"""Envoi une demande de changement de score au serveur
+
+	Args:
+		user (User): _description_
+		gameID (int): _description_
+		score (int): _description_
+
+	Returns:
+		bool: _description_
+	"""
+	data = json.dumps({"gameID": gameID, "score": score})
+	res = send(req="SetScore", user=user, data=data)
+	return res.text == "Allowed"
