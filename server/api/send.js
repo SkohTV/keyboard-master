@@ -38,13 +38,22 @@ export default async function send(req, res){
 			case 'JoinMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				gamemodes = unpackGamemodes(pack.gamemodes);
-				dataDB = await Matchmaking.find({'gamemodes': {$in: gamemodes}})
-				console.log(dataDB, dataDB.length)
+				dataDB = await Matchmaking.findOne({'gamemodes': {$in: gamemodes}, 'player2': ''})
+				if (dataDB){
+					dataDB.player2 = user.name;
+					await dataDB.save();
+					returnValue = 'Allowed';
+					break;
+				}
 				dataDB = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
 				await dataDB.save();
 				await new Promise(r => setTimeout(r, 5000));
-				dataDB = await Matchmaking.find({})
-				returnValue = 'Allowed' ; break ;
+				dataDB = await Matchmaking.findOne({'username': user.name})
+				if (dataDB.player2){
+					returnValue = 'Allowed';
+					break;
+				}
+				returnValue = 'Denied' ; break ;
 
 			case 'LeaveMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
