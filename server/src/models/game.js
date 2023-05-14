@@ -8,7 +8,7 @@ const scheme = new mongoose.Schema({
 	player2ms: {type: Number, required: true}
 });
 
-const Game = mongoose.model('Matchmaking', scheme, 'Matchmaking');
+const Game = mongoose.model('Game', scheme, 'Game');
 
 
 export default Game;
