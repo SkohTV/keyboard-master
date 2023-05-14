@@ -45,11 +45,11 @@ export default async function send(req, res){
 					returnValue = 'Allowed';
 					break;
 				}
-				dataDB = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
+				dataDB = new Matchmaking({ 'gamemodes': gamemodes, 'player1': user.name, 'player2': ''});
 				await dataDB.save();
 				await new Promise(r => setTimeout(r, 5000));
-				dataDB = await Matchmaking.findOne({'username': user.name})
-				if (dataDB.player2){
+				dataDB = await Matchmaking.findOne({'player1': user.name})
+				if (dataDB.player2 != ''){
 					returnValue = 'Allowed';
 					break;
 				}
