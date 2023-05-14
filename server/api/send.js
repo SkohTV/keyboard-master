@@ -58,12 +58,12 @@ export default async function send(req, res){
 					returnValue = dataDB.gameID;
 					break;
 				}
-				dataDB = await Matchmaking.deleteMany({'username': user.name});
+				dataDB = await Matchmaking.deleteMany({'player1': user.name});
 				returnValue = 'Denied' ; break ;
 
 			case 'LeaveMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				dataDB = await Matchmaking.deleteMany({'username': user.name});
+				dataDB = await Matchmaking.deleteMany({'player1': user.name});
 				returnValue = 'Allowed' ; break ;
 
 			case 'QuerySentence':
