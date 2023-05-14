@@ -56,6 +56,7 @@ export default async function send(req, res){
 				dataDB = await Matchmaking.findOne({'player1': user.name})
 				if (dataDB.player2 != ''){
 					returnValue = dataDB.gameID;
+					dataDB = await Matchmaking.deleteMany({'player1': user.name});
 					break;
 				}
 				dataDB = await Matchmaking.deleteMany({'player1': user.name});

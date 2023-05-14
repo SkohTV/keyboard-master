@@ -71,7 +71,7 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 
 
 
-def join_matchmaking(user: User, gamemodes: list) -> bool:
+def join_matchmaking(user: User, gamemodes: list) -> str:
 	"""Envoi une demande pour rejoindre le service de matchmaking au serveur\n
 
 	Args:
@@ -83,7 +83,7 @@ def join_matchmaking(user: User, gamemodes: list) -> bool:
 	"""
 	data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
 	res = send(req="JoinMatchmaking", user=user, data=data)
-	return res.text == "Allowed"
+	return res.text
 
 
 

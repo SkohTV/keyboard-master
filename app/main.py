@@ -23,11 +23,18 @@ from src.app_main import App_Main
 import src.connect_server as c
 import threading as th
 import time
+from src.matchmaking import CustomThread
 
 def a():
   print("a started")
   usr = c.user_connection(False, 'Skoh', 'abcde')
-  c.join_matchmaking(usr, ['easy', 'insane'])
+  myT = CustomThread(usr, ['easy', 'insane'])
+  myT.start()
+  time.sleep(2)
+  print(myT.state())
+  time.sleep(10)
+  print(myT.state)
+
 
 def b():
   print("b started")
@@ -39,5 +46,4 @@ time.sleep(2)
 th.Thread(target=b).start()
 
 
-time.sleep(10)
 
