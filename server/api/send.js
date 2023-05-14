@@ -42,19 +42,16 @@ export default async function send(req, res){
 				dataDB = await Matchmaking.findOne({'gamemodes': {$in: gamemodes}, 'player2': ''})
 				if (dataDB){
 					gameID = Math.floor(Math.random() * (999999999 - 100000000 + 1)) + 100000000;
-					gameDB = new Game({'gameID': gameID, 'player1ms': 0, 'player2ms': 0});
+					gameDB = new Game({'gameID': gameID, 'player1ms': 0, 'player2ms': 0, 'player2': user.name});
 					dataDB.player2 = user.name;
 					dataDB.gameID = gameID;
-					await gameDB.save();
 					await dataDB.save();
+					await gameDB.save();
 
 					const filteredGamemodes = dataDB.gamemodes.filter(x => gamemodes.includes(x))
 					const sentenceDB = await Sentences.find({"type": {$in: filteredGamemodes[Math.floor(Math.random() * filteredGamemodes.length)]}});
-					console.log(sentenceDB)
 					const manySentences = sentenceDB[Math.floor(Math.random() * sentenceDB.length)];
-					console.log(manySentences)
 					const sentence = manySentences.sentences[Math.floor(Math.random() * manySentences.sentences.length)];
-					console.log(sentence)
 					gameDB.sentence = sentence;
 					await gameDB.save()
 
@@ -68,6 +65,9 @@ export default async function send(req, res){
 				if (dataDB.player2 != ''){
 					returnValue = dataDB.gameID;
 					dataDB = await Matchmaking.deleteMany({'player1': user.name});
+					gameDB = await Game.findOne({'gameID': returnValue});
+					gameDB.player1 = user.name;
+					gameDB.save();
 					break;
 				}
 				dataDB = await Matchmaking.deleteMany({'player1': user.name});
@@ -79,12 +79,17 @@ export default async function send(req, res){
 				returnValue = 'Allowed' ; break ;
 
 			case 'SetMyScore':
+				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
+				dataDB = await Game.findOne({'gameID': pack.gameID})
+				dataDB.
 				break;
 
 			case 'RetrieveScore':
+				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				break;
 
 			case 'RetrieveSentence':
+				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				break;
 
 			case 'QuerySentence':

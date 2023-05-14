@@ -39,7 +39,7 @@ def a():
 def b():
   print("b started")
   usr = c.user_connection(False, 'Skoh2', 'abcd')
-  myT = CustomThread(usr, ['insane'])
+  myT = CustomThread(usr, ['easy'])
   myT.start()
 
 th.Thread(target=a).start()
