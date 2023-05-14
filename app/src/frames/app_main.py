@@ -8,6 +8,7 @@ import webbrowser
 from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, query_sentence as query
 
 from src.frames.app_solo import App_Solo
+from src.frames.app_matchmaking import App_Matchmaking
 
 
 
@@ -46,8 +47,9 @@ class App_Main(tk.Frame):
 
 
 	def button_solo(self):
-		self.controller.show_frame(App_)
+		self.controller.show_frame(App_Solo)
 
 
 	def button_versus(self):
-		self.controller.show_frame(App_Main)
+		self.master.master.start_matchmaking()
+		self.controller.show_frame(App_Matchmaking)

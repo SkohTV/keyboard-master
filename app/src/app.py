@@ -78,3 +78,7 @@ class App(tk.Tk):
 		"""Shutdown le programme Python lorsqu'on ferme la fenêtre, pour éviter d'ouvrir la fenêtre de jeu"""
 		self.destroy()
 		sys.exit()
+
+
+	def start_matchmaking(self):
+		pass
