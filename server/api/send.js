@@ -5,7 +5,7 @@ import Sentences from '../src/models/sentences.js';
 import Users from '../src/models/users.js';
 
 import { comparePassword, encryptPassword, verifPassword } from '../src/password.js';
-import { unpackGamemodes } from '../src/utils';
+import { unpackGamemodes } from '../src/utils.js';
 
 
 mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopology: true })
