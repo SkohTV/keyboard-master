@@ -47,6 +47,14 @@ export default async function send(req, res){
 					dataDB.gameID = gameID;
 					await gameDB.save();
 					await dataDB.save();
+
+					const filteredGamemodes = dataDB.gamemodes.filter(x => pack.gamemodes.includes(x))
+					const sentenceDB = await Sentences.find({"type": {$in: filteredGamemodes[Math.floor(Math.random() * filteredGamemodes.length)]}});
+					const manySentences = dataDB[Math.floor(Math.random() * sentenceDB.length)];
+					const sentence = manySentences.sentences[Math.floor(Math.random() * manySentences.sentences.length)];
+					gameDB.sentence = sentence;
+					await gameDB.save()
+
 					returnValue = dataDB.gameID;
 					break;
 				}
@@ -67,11 +75,19 @@ export default async function send(req, res){
 				dataDB = await Matchmaking.deleteMany({'player1': user.name});
 				returnValue = 'Allowed' ; break ;
 
+			case 'SetMyScore':
+				break;
+
+			case 'RetrieveScore':
+				break;
+
+			case 'RetrieveSentence':
+				break;
+
 			case 'QuerySentence':
 				gamemodes = unpackGamemodes(pack.gamemodes);
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
 				const manySentences = dataDB[Math.floor(Math.random() * dataDB.length)];
-				console.log(manySentences, manySentences["sentences"], manySentences.sentences)
 				const sentence = manySentences.sentences[Math.floor(Math.random() * manySentences.sentences.length)]
 				returnValue = sentence ; break ;
 		} res.status(201).send(returnValue);

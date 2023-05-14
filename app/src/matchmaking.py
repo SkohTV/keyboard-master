@@ -1,6 +1,6 @@
 import threading as th
-from connect_server import join_matchmaking as join, leave_matchmaking as leave
-from utils import User, export_gamemodes
+from src.connect_server import join_matchmaking as join, leave_matchmaking as leave
+from src.utils import User, export_gamemodes
 
 
 
@@ -11,7 +11,7 @@ class CustomThread(th.Thread):
 		self.gamemodes = export_gamemodes(gamemodes)
 		self.state = None
 		
-	def request(self) -> None:
+	def run(self) -> None:
 		while not self.state:
 			res = join(self.user, self.gamemodes)
 			if res != 'Denied':

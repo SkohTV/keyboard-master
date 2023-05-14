@@ -31,7 +31,7 @@ def a():
   myT = CustomThread(usr, ['easy', 'insane'])
   myT.start()
   time.sleep(2)
-  print(myT.state())
+  print(myT.state)
   time.sleep(10)
   print(myT.state)
 
@@ -39,7 +39,8 @@ def a():
 def b():
   print("b started")
   usr = c.user_connection(False, 'Skoh2', 'abcd')
-  c.join_matchmaking(usr, ['insane'])
+  myT = CustomThread(usr, ['insane'])
+  myT.start()
 
 th.Thread(target=a).start()
 time.sleep(2)
