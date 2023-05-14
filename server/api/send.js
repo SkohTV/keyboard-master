@@ -5,6 +5,7 @@ import Sentences from '../src/models/sentences.js';
 import Users from '../src/models/users.js';
 
 import { comparePassword, encryptPassword, verifPassword } from '../src/password.js';
+import { unpackGamemodes } from '../src/utils';
 
 
 mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -14,7 +15,7 @@ mongoose.connect(process.env.MONGO_USER, { useNewUrlParser: true, useUnifiedTopo
 
 export default async function send(req, res){
 	const [type, user, pack] = [req.body.type, JSON.parse(req.body.user), JSON.parse(req.body.pack)];
-	let returnValue, hashedPwd, dataDB, allow;
+	let returnValue, hashedPwd, dataDB, allow, gamemodes;
 
 	try {
 		switch (type){
@@ -36,6 +37,9 @@ export default async function send(req, res){
 
 			case 'JoinMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
+				gamemodes = unpackGamemodes(pack.gamemodes);
+				dataDB = await Matchmaking.find({'gamemodes': {$in: gamemodes}})
+				console.log(dataDB, dataDB.length)
 				dataDB = new Matchmaking({ 'username': user.name, 'gamemodes': pack.gamemodes });
 				await dataDB.save();
 				await new Promise(r => setTimeout(r, 5000));
@@ -48,7 +52,7 @@ export default async function send(req, res){
 				returnValue = 'Allowed' ; break ;
 
 			case 'QuerySentence':
-				const gamemodes = pack.gamemodes.split("-")
+				gamemodes = unpackGamemodes(pack.gamemodes);
 				dataDB = await Sentences.find({"type": {$in: gamemodes}});
 				const manySentences = dataDB[Math.floor(Math.random() * dataDB.length)];
 				console.log(manySentences, manySentences["sentences"], manySentences.sentences)
