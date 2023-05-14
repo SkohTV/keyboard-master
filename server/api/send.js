@@ -53,6 +53,7 @@ export default async function send(req, res){
 					returnValue = 'Allowed';
 					break;
 				}
+				dataDB = await Matchmaking.deleteMany({'username': user.name});
 				returnValue = 'Denied' ; break ;
 
 			case 'LeaveMatchmaking':

@@ -22,5 +22,6 @@ from src.app_main import App_Main
 
 import src.connect_server as c
 
-usr = c.user_connection(False, 'Skoh', 'abcde')
-c.join_matchmaking(usr, ['easy', 'insane'])
+#usr = c.user_connection(False, 'Skoh', 'abcde')
+usr = c.user_connection(False, 'Skoh2', 'abcd')
+c.join_matchmaking(usr, ['insane'])
