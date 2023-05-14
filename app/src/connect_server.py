@@ -128,12 +128,13 @@ def set_score(user: User, gameID: int, score: int) -> bool:
 		bool: _description_
 	"""
 	data = json.dumps({"gameID": gameID, "score": score})
-	res = send(req="SetScore", user=user, data=data)
-	return res.text == "Allowed"
+	res = send(req="SetMyScore", user=user, data=data)
+	print(res.text)
+	return res.text
 
 
 
 def retrieve_data(user: User, gameID: int):
   data = json.dumps({"gameID": gameID})
   res = send(req="RetrieveData", user=user, data=data)
-  return json.loads(res)
+  return json.loads(res.text)

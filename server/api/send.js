@@ -79,17 +79,18 @@ export default async function send(req, res){
 				returnValue = 'Allowed' ; break ;
 
 			case 'SetMyScore':
+
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				dataDB = await Game.findOne({'gameID': pack.gameID})
 				if (dataDB.player1 === user.name && dataDB.player1ms < pack.score){
 					dataDB.player1ms = pack.score;
 					await dataDB.save()
 					returnValue = 'Allowed' ; break ;
-				} else if (dataDB.player2ms < pack.score){
+				} else if (dataDB.player2 === user.name && dataDB.player2ms < pack.score){
 					dataDB.player2ms = pack.score;
 					await dataDB.save()
 					returnValue = 'Allowed' ; break ;
-				} returnValue = 'Denied'; break
+				} returnValue = 'Denied'; break ;
 
 			case 'RetrieveData':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
