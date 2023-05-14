@@ -1,7 +1,7 @@
 import tkinter as tk
 
 class User:
-	def __init__(self, name: str, hashed_password: str) -> None:
+	def __init__(self, name: str = None, hashed_password: str = None) -> None:
 		self.name = name
 		self.hashed_password = hashed_password
 

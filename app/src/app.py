@@ -7,8 +7,11 @@ from ttkbootstrap import Style
 
 from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, query_sentence as query
 
-from src.ttk_windows.app_login import App_Login
-from src.ttk_windows.app_main import App_Main
+from src.frames.app_login import App_Login
+from src.frames.app_main import App_Main
+from src.frames.app_solo import App_Solo
+
+from src.utils import User
 
 
 
@@ -17,6 +20,14 @@ class App(tk.Tk):
 		"""Initialisation de l'objet"""
 		# On utilise l'init de l'objet Tkinter de base
 		tk.Tk.__init__(self)
+
+		# On gardera l'utilisateur dans la classe, pour y accéder plus facilement (global == mauvaise pratique)
+		self.user = User()
+  
+		# Valeurs réutilisées dans des frames, nécessaires ici pour y accéder
+		self.username = tk.StringVar()
+		self.username.set("null")
+		self.github_icon = tk.PhotoImage(file="ico/github.png")
 
 		# On attrape l'event de fermeture de la fenêtre, pour pouvoir clore le script
 		self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -32,7 +43,7 @@ class App(tk.Tk):
 		# On va donc tenter de de set l'icône, et si ça échoue on passe à la suite
 		try:
 			self.iconbitmap("ico/keyboard.ico")
-		except TclError:
+		except TclError as e:
 			pass
 
 		# On crée un pack pour englober la frame
@@ -56,7 +67,7 @@ class App(tk.Tk):
 		frame = self.frames[cont]
 		if cont == App_Login:
 			self.title("Login")
-			self.geometry("285x165")
+			self.geometry("285x155")
 		else:
 			self.title("Keyboard Master")
 			self.geometry("700x400")
