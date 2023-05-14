@@ -81,16 +81,32 @@ export default async function send(req, res){
 			case 'SetMyScore':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				dataDB = await Game.findOne({'gameID': pack.gameID})
-				dataDB.
-				break;
+				if (dataDB.player1 === user.name){
+					dataDB.player1ms = pack.score;
+					await dataDB.save()
+					returnValue = 'Allowed' ; break ;
+				}
+				dataDB.player2ms = pack.score;
+				await dataDB.save()
+				returnValue = 'Allowed' ; break ;
 
-			case 'RetrieveScore':
+			case 'RetrieveData':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				break;
-
-			case 'RetrieveSentence':
-				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				break;
+				dataDB = await Game.findOne({'gameID': pack.gameID})
+				if (dataDB.player1 === user.name){
+					returnValue = JSON.stringify({
+						'player': dataDB.player2,
+						'playerms': dataDB.player2ms,
+						'sentence': dataDB.sentence
+					})
+					break ;
+				}
+				returnValue = JSON.stringify({
+					'player': dataDB.player1,
+					'playerms': dataDB.player1ms,
+					'sentence': dataDB.sentence
+				})
+				break ;
 
 			case 'QuerySentence':
 				gamemodes = unpackGamemodes(pack.gamemodes);
