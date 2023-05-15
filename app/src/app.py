@@ -10,6 +10,8 @@ from src.connect_server import join_matchmaking as join, leave_matchmaking as le
 from src.frames.app_login import App_Login
 from src.frames.app_main import App_Main
 from src.frames.app_solo import App_Solo
+from src.frames.app_matchmaking import App_Matchmaking
+from src.frames.app_multi import App_Multi
 
 from src.utils import User
 
@@ -26,6 +28,8 @@ class App(tk.Tk):
   
 		# Valeurs réutilisées dans des frames, nécessaires ici pour y accéder
 		self.username = tk.StringVar()
+		self.versusname = tk.StringVar()
+		self.sentence = tk.StringVar()
 		self.username.set("null")
 		self.github_icon = tk.PhotoImage(file="ico/github.png")
 
@@ -43,7 +47,7 @@ class App(tk.Tk):
 		# On va donc tenter de de set l'icône, et si ça échoue on passe à la suite
 		try:
 			self.iconbitmap("ico/keyboard.ico")
-		except TclError as e:
+		except TclError:
 			pass
 
 		# On crée un pack pour englober la frame
@@ -54,7 +58,7 @@ class App(tk.Tk):
 
 		# On ajoute les frames à un dictionnaire
 		self.frames = {}
-		for F in (App_Login, App_Main):
+		for F in (App_Login, App_Main, App_Solo, App_Matchmaking, App_Multi):
 			frame = F(container, self)
 			self.frames[F] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
@@ -82,3 +86,7 @@ class App(tk.Tk):
 
 	def start_matchmaking(self):
 		pass
+
+
+	def send_event(self, event: str) -> None:
+		self.event_generate(f"<<{event}>>")

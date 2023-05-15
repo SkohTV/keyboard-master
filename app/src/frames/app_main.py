@@ -23,9 +23,10 @@ class App_Main(tk.Frame):
 		frame1, frame2, frame3 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
 
 		# Définition des widgets
-		self.label_hello = ttk.Label(frame1, textvariable=self.master.master.username)
-		self.button_solo = tk.Button(frame2, text="Solo")
-		self.button_versus = tk.Button(frame3, text="Versus")
+		#self.label_hello = ttk.Label(frame1, textvariable=self.master.master.username)
+		self.label_hello = ttk.Label(frame1, text=f"Bonjour {self.master.master.user.name}")
+		self.button_solo = tk.Button(frame2, text="Solo", command=self.button_solo)
+		self.button_versus = tk.Button(frame3, text="Versus", command=self.button_versus)
 		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
 
@@ -44,6 +45,8 @@ class App_Main(tk.Frame):
 		frame1.pack()
 		frame2.pack()
 		frame3.pack()
+  
+		self.bind("<<UpdateName>>", self.update_name)
 
 
 	def button_solo(self):
@@ -51,5 +54,14 @@ class App_Main(tk.Frame):
 
 
 	def button_versus(self):
+		# TEMPORAIRE
+		self.master.master.versusname.set(f"Vous affrontez Null")
+		self.master.master.sentence.set(f"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam est elit, convallis vel quam nec, commodo efficitur urna. Vivamus suscipit elit sit amet consectetur mattis. In eget cursus velit. Etiam sodales dui eget nibh ullamcorper, id lacinia leo egestas.")
+
 		self.master.master.start_matchmaking()
 		self.controller.show_frame(App_Matchmaking)
+
+
+	def update_name(self):
+		print("a")
+		self.label_hello.config(text=f"Bonjour {self.master.master.user.name}")

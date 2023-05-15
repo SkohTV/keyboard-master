@@ -59,7 +59,8 @@ class App_Login(tk.Frame):
 		else:
 			self.label_status.config(text="Connection réussie ! Redirection...") # Fallback, ne sera normalement pas affiché
 			self.master.master.user = res
-			self.master.master.username.set(f"Bonjour {res.name}")
+			#self.master.master.username.set(f"Bonjour {res.name}")
+			self.master.master.send_event("UpdateName")
 			self.controller.show_frame(App_Main)
 
 
@@ -71,5 +72,6 @@ class App_Login(tk.Frame):
 		else:
 			self.label_status.config(text="Création réussie ! Redirection...") # Fallback, ne sera normalement pas affiché
 			self.master.master.user = res
-			self.master.master.username.set(f"Bonjour {res.name}")
+			#self.master.master.username.set(f"Bonjour {res.name}")
+			self.master.master.send_event("UpdateName")
 			self.controller.show_frame(App_Main)
