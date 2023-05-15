@@ -24,7 +24,7 @@ class App_Main(tk.Frame):
 
 		# Définition des widgets
 		#self.label_hello = ttk.Label(frame1, textvariable=self.master.master.username)
-		self.label_hello = ttk.Label(frame1, text=f"Bonjour {self.master.master.user.name}")
+		self.label_hello = ttk.Label(frame1, text=f"Bonjour null")
 		self.button_solo = tk.Button(frame2, text="Solo", command=self.button_solo)
 		self.button_versus = tk.Button(frame3, text="Versus", command=self.button_versus)
 		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
@@ -46,7 +46,7 @@ class App_Main(tk.Frame):
 		frame2.pack()
 		frame3.pack()
   
-		self.bind("<<UpdateName>>", self.update_name)
+		self.master.master.bind("<<UpdateName>>", self.update_name)
 
 
 	def button_solo(self):
@@ -54,14 +54,9 @@ class App_Main(tk.Frame):
 
 
 	def button_versus(self):
-		# TEMPORAIRE
-		self.master.master.versusname.set(f"Vous affrontez Null")
-		self.master.master.sentence.set(f"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam est elit, convallis vel quam nec, commodo efficitur urna. Vivamus suscipit elit sit amet consectetur mattis. In eget cursus velit. Etiam sodales dui eget nibh ullamcorper, id lacinia leo egestas.")
-
 		self.master.master.start_matchmaking()
 		self.controller.show_frame(App_Matchmaking)
 
 
-	def update_name(self):
-		print("a")
+	def update_name(self, _):
 		self.label_hello.config(text=f"Bonjour {self.master.master.user.name}")

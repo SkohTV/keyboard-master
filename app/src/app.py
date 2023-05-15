@@ -27,10 +27,6 @@ class App(tk.Tk):
 		self.user = User()
   
 		# Valeurs réutilisées dans des frames, nécessaires ici pour y accéder
-		self.username = tk.StringVar()
-		self.versusname = tk.StringVar()
-		self.sentence = tk.StringVar()
-		self.username.set("null")
 		self.github_icon = tk.PhotoImage(file="ico/github.png")
 
 		# On attrape l'event de fermeture de la fenêtre, pour pouvoir clore le script

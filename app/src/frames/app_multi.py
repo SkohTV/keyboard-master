@@ -23,7 +23,7 @@ class App_Multi(tk.Frame):
 		frame1, frame2 = ttk.Frame(self), ttk.Frame(self)
 
 		# Définition des widgets
-		self.label_hello = ttk.Label(frame1, text=self.master.master.versusname)
+		self.label_hello = ttk.Label(frame1)
 		self.text_entry = tk.Text(frame2)
 
 		# Changement de certains paramètres de style (police & couleur)
