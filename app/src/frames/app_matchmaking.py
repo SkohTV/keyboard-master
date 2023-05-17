@@ -46,7 +46,8 @@ class App_Matchmaking(tk.Frame):
 
 	@threaded
 	def listen_keypresses(self):
-		pass
+		while (True):
+			pass
 
 
 	def update_multi(self, _):
