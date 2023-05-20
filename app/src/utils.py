@@ -1,11 +1,8 @@
 from typing import Callable
 import tkinter as tk
-import threading
+import threading, ctypes
+from pynput import keyboard
 
-class User:
-	def __init__(self, name: str = None, hashed_password: str = None) -> None:
-		self.name = name
-		self.hashed_password = hashed_password
 
 
 def export_gamemodes(gamemodes: list) -> str:
@@ -33,3 +30,10 @@ def threaded(fn: Callable) -> Callable:
 	def wrapper(*args, **kwargs):
 		threading.Thread(target=fn, args=args, kwargs=kwargs).start()
 	return wrapper
+
+
+
+class User:
+	def __init__(self, name: str = None, hashed_password: str = None) -> None:
+		self.name = name
+		self.hashed_password = hashed_password

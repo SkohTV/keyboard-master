@@ -28,10 +28,12 @@ class App_Main(tk.Frame):
 		self.button_solo = tk.Button(frame2, text="Solo", command=self.button_solo)
 		self.button_versus = tk.Button(frame3, text="Versus", command=self.button_versus)
 		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
+		self.reskin = ttk.Label(self, image=self.master.master.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
+		self.reskin.bind("<Button-1>", lambda _: self.master.master.change_skin())
 
 		# Changement de certains paramètres de style (police & couleur)
-		self.label_hello["font"] = font.Font(family="Impact", weight="normal", size=30)
+		self.label_hello["font"] = font.Font(family="Verdana", weight="bold", size=30)
 		self.button_solo.config(font=("Tahoma", 35))
 		self.button_versus.config(font=("Tahoma", 35))
 
@@ -40,6 +42,7 @@ class App_Main(tk.Frame):
 		self.button_solo.pack(pady=20, ipadx=150, ipady=5)
 		self.button_versus.pack(pady=10, ipadx=150, ipady=5)
 		self.github_icon.place(x=5, y=360)
+		self.reskin.place(x=660, y=360)
 
 		# On pack les 4 frames
 		frame1.pack()

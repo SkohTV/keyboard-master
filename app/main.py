@@ -1,3 +1,5 @@
+"""Entry point for the application"""
+
 from src.app import App
 
 # Q/A
@@ -5,20 +7,19 @@ from src.app import App
 # A: Afin d'éviter les side effects qui pourraient modifier la fenêtre de manière innatendue
 
 
-import time
 
 # Ne s'exéctue que si main.py est lancé, pas importé
 if __name__ == "__main__":
-  # On lance la fenêtre de login
-  #app_login = App_Login()
-  #app_login.mainloop()
-  ## Lorsqu'elle se ferme SANS faire un sys.exit, on lance la fenêtre de jeu
-  #time.sleep(1)
-  #app_main = App_Main()
-  #app_main.mainloop()
-  
-  app = App()
-  app.mainloop()
+	# On lance la fenêtre de login
+	#app_login = App_Login()
+	#app_login.mainloop()
+	## Lorsqu'elle se ferme SANS faire un sys.exit, on lance la fenêtre de jeu
+	#time.sleep(1)
+	#app_main = App_Main()
+	#app_main.mainloop()
+
+	app = App()
+	app.mainloop()
 
 
 # TESTS

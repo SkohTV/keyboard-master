@@ -1,4 +1,4 @@
-import sys
+import os
 import tkinter as tk
 import tkinter.ttk as ttk
 from _tkinter import TclError
@@ -28,6 +28,8 @@ class App(tk.Tk):
   
 		# Valeurs réutilisées dans des frames, nécessaires ici pour y accéder
 		self.github_icon = tk.PhotoImage(file="ico/github.png")
+		self.back_button = tk.PhotoImage(file="ico/back.png")
+		self.reskin = tk.PhotoImage(file="ico/change_skin.png")
 
 		# On attrape l'event de fermeture de la fenêtre, pour pouvoir clore le script
 		self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -38,6 +40,8 @@ class App(tk.Tk):
 		# On gère le style via ttkbootstrap (juste un thème par défaut)
 		self.style = Style()
 		self.style.theme_use("darkly")
+		self.skin_cursor = 0
+		self.skins = ["darkly", "solar", "superhero", "cyborg", "vapor"]
 
 		# Le chargement de l'icône peut échouer (si l'utilisateur est sous Linux par exemple)
 		# On va donc tenter de de set l'icône, et si ça échoue on passe à la suite
@@ -74,10 +78,23 @@ class App(tk.Tk):
 		frame.tkraise()
 
 
+	def external_show_frame(self, textFrame) -> None:
+		"""Fonction pour afficher une frame depuis une autre frame"""
+		match textFrame:
+			case "App_Main":
+				self.show_frame(App_Main)
+			case "App_Solo":
+				self.show_frame(App_Solo)
+			case "App_Matchmaking":
+				self.show_frame(App_Matchmaking)
+			case "App_Multi":
+				self.show_frame(App_Multi)
+
+
 	def on_close(self):
 		"""Shutdown le programme Python lorsqu'on ferme la fenêtre, pour éviter d'ouvrir la fenêtre de jeu"""
 		self.destroy()
-		sys.exit()
+		os._exit(1)
 
 
 	def start_matchmaking(self):
@@ -86,3 +103,8 @@ class App(tk.Tk):
 
 	def send_event(self, event: str) -> None:
 		self.event_generate(f"<<{event}>>")
+
+
+	def change_skin(self) -> None:
+		self.skin_cursor = (self.skin_cursor + 1) % len(self.skins)
+		self.style.theme_use(self.skins[self.skin_cursor])

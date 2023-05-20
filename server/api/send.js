@@ -62,6 +62,7 @@ export default async function send(req, res){
 				await dataDB.save();
 				await new Promise(r => setTimeout(r, 5000));
 				dataDB = await Matchmaking.findOne({'player1': user.name})
+				if (!dataDB){ returnValue = 'Denied' ; break ; }
 				if (dataDB.player2 != ''){
 					returnValue = dataDB.gameID;
 					dataDB = await Matchmaking.deleteMany({'player1': user.name});
