@@ -7,7 +7,7 @@ import webbrowser
 from pynput import keyboard
 import threading
 
-from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, query_sentence as query
+from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, retrieve_data as retrieve
 from src.utils import threaded
 
 
@@ -69,7 +69,12 @@ class App_Matchmaking(tk.Frame):
 		res = "Denied"
 		while res == "Denied" and self.thread:
 			res = join(self.master.master.user, gamemodes)
-			print(res)
+
+		if not res == "Denied":
+			self.label_hello["text"] = "En attente d'un adversaire"
+			self.master.master.match_res = retrieve(self.master.master.user, res)
+			self.master.master.external_show_frame("App_Multi")
+			self.master.master.send_event("StartMulti")
 
 
 	def join_or_leave(self):
@@ -92,5 +97,4 @@ class App_Matchmaking(tk.Frame):
 		leave(self.master.master.user)
 		self.label_hello["text"] = "Lancez une recherche pour commencer"
 		self.query_button["text"] = "Rejoindre le matchmaking"
-		self.query_button["command"] = self.query_sentence
 		[i.set(False) for i in self.gamemodes_var]

@@ -25,6 +25,7 @@ class App(tk.Tk):
 
 		# On gardera l'utilisateur dans la classe, pour y accéder plus facilement (global == mauvaise pratique)
 		self.user = User()
+		self.match_res = None
   
 		# Valeurs réutilisées dans des frames, nécessaires ici pour y accéder
 		self.github_icon = tk.PhotoImage(file="ico/github.png")

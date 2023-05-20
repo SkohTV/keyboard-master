@@ -117,24 +117,35 @@ def query_sentence(gamemodes: list) -> str:
 
 
 def set_score(user: User, gameID: int, score: int) -> bool:
-	"""Envoi une demande de changement de score au serveur
+	"""Envoi une demande de changement de score au serveur\n
 
 	Args:
-		user (User): _description_
-		gameID (int): _description_
-		score (int): _description_
+		user (User): Utilisateur qui envoi la requête\n
+		gameID (int): ID de la game en cours\n
+		score (int): Score à envoyer\n
 
 	Returns:
-		bool: _description_
+		bool: True si demande acceptée par le serveur, sinon False\n
 	"""
 	data = json.dumps({"gameID": gameID, "score": score})
 	res = send(req="SetMyScore", user=user, data=data)
 	print(res.text)
-	return res.text
+	return res.text == "Allowed"
 
 
 
-def retrieve_data(user: User, gameID: int):
-  data = json.dumps({"gameID": gameID})
-  res = send(req="RetrieveData", user=user, data=data)
-  return json.loads(res.text)
+def retrieve_data(user: User, gameID: int) -> dict:
+	"""Récupère actuelles les données d'une partie\n
+
+	Args:
+		user (User): Utilisateur qui envoi la requête\n
+		gameID (int): ID de la game en cours\n
+
+	Returns:
+		dict: Données récupérées\n
+	"""
+	data = json.dumps({"gameID": gameID})
+	res = send(req="RetrieveData", user=user, data=data)
+	res = json.loads(res.text)
+	res["gameID"] = gameID
+	return res

@@ -7,7 +7,7 @@ import webbrowser
 from pynput import keyboard
 import threading
 
-from src.connect_server import query_sentence as query
+from src.connect_server import retrieve_data as retrieve, set_score as score
 from src.utils import threaded
 
 
@@ -32,18 +32,22 @@ class App_Multi(tk.Frame):
 		frame1, frame2, frame3, frame4, frame5 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
 
 		# Définition des widgets
-		self.label_hello = ttk.Label(frame1, text="Lancez une recherche pour commencer")
+		self.label_hello = ttk.Label(frame1, text="Commencez quand vous êtes prêt")
 		self.text_entry = tk.Text(frame2, wrap=tk.WORD, width=50, height=10)
-		self.query_button = ttk.Button(frame5, text="Rechercher une phrase", command=self.query_sentence)
-		self.label_you = ttk.Label(frame4, text="")
+		self.label_you = ttk.Label(frame4, text="aaa")
+		self.label_advers = ttk.Label(frame4, text="aaa")
 		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
+		self.back_button = ttk.Label(self, image=self.master.master.back_button, cursor="hand2")
+		self.reskin = ttk.Label(self, image=self.master.master.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
+		self.back_button.bind("<Button-1>", lambda _: self.back())
+		self.reskin.bind("<Button-1>", lambda _: self.master.master.change_skin())
 		self.gamemodes_var = []
 		self.gamemodes_array = []
 
 		# On peuple self.gamemodes_var et self.gamemodes_array avec les modes de jeu
 		for index, elem in enumerate(("easy", "insane")):
-			self.gamemodes_var.append(tk.IntVar())
+			self.gamemodes_var.append(tk.BooleanVar())
 			self.gamemodes_array.append(ttk.Checkbutton(frame3, text=elem, variable=self.gamemodes_var[index], onvalue=True, offvalue=False))
 
 		# Changement de certains paramètres de style (police & couleur)
@@ -60,10 +64,12 @@ class App_Multi(tk.Frame):
 		self.label_hello.pack(pady=20)
 		self.text_entry.pack(side=tk.LEFT)
 		self.label_you.pack(side=tk.LEFT, padx=20)
-		self.query_button.pack()
+		self.label_advers.pack(side=tk.LEFT, padx=20)
 		[i.pack(side=tk.TOP, anchor=tk.W, pady=8) for i in self.gamemodes_array]
 		[i.set(False) for i in self.gamemodes_var]
 		self.github_icon.place(x=5, y=360)
+		self.back_button.place(x=5, y=20)
+		self.reskin.place(x=660, y=360)
 
 		# On pack les 4 frames
 		frame1.pack()
@@ -71,6 +77,8 @@ class App_Multi(tk.Frame):
 		frame4.pack(side=tk.BOTTOM, pady=30)
 		frame5.pack(side=tk.BOTTOM)
 		frame3.place(x=600, y=(100 - frame3.winfo_height()/2), anchor=tk.NW)
+
+		self.master.master.bind("<<StartMulti>>", self.on_arrive)
 
 
 	@threaded
@@ -139,25 +147,17 @@ class App_Multi(tk.Frame):
 			print("Stopped")
 
 
-	def query_sentence(self):
-		gamemodes = []
-		for index, elem in enumerate(self.gamemodes_var):
-			if elem.get():
-				gamemodes.append(self.gamemodes_array[index].cget("text"))
-		
-		if not gamemodes:
-			self.text_update("Veuillez sélectionner au moins un mode de jeu")
-		else:
-			self.thread = False
-			self.written = []
-			self.sentence = ""
-			self.start_time = None
-			self.label_you.config(text="")
-			self.label_hello.config(text="Commencez à taper quand vous êtes prêt")
-			self.text_update("Recherche d'une phrase...")
-			self.sentence = query(gamemodes)
-			self.text_update(self.sentence)
-			self.thread = self.listen_keypresses()
+	@threaded
+	def send_ms(self):
+		while (self.thread):
+			res = score(self.master.master.user, self.master.master.match_res["gameID"], round(len(self.written) / (time.time() - self.start_time), 3) * 1000)
+			time.sleep(0.25)
+
+	@threaded
+	def receive_ms(self):
+		while (self.thread):
+			res = retrieve(self.master.master.user, self.master.master.match_res["gameID"])
+			time.sleep(0.25)
 
 
 	def text_update(self, text):
@@ -165,3 +165,26 @@ class App_Multi(tk.Frame):
 		self.text_entry.delete("1.0", tk.END)
 		self.text_entry.insert(tk.END, text)
 		self.text_entry.configure(state="disabled")
+
+
+	def back(self):
+		self.reset()
+		self.master.master.external_show_frame("App_Main")
+
+
+	def reset(self):
+		self.thread = False
+		self.written = []
+		self.sentence = ""
+		self.start_time = None
+		self.label_you.config(text="")
+		self.label_hello.config(text="Commencez quand vous êtes prêt")
+		self.text_update("")
+
+
+	def on_arrive(self, _):
+		self.thread = True
+		print(self.master.master.match_res)
+		self.listen_keypresses()
+		self.send_ms()
+		self.receive_ms()
