@@ -38,6 +38,7 @@ def send(req: str, user: User, data: dict) -> requests.models.Response:
 	}
 
 	response = requests.post(url, data=pack)
+	print(response.text)
 	return response
 
 
@@ -129,7 +130,6 @@ def set_score(user: User, gameID: int, score: int) -> bool:
 	"""
 	data = json.dumps({"gameID": gameID, "score": score})
 	res = send(req="SetMyScore", user=user, data=data)
-	print(res.text)
 	return res.text == "Allowed"
 
 

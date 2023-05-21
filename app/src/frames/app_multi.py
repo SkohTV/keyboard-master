@@ -150,13 +150,16 @@ class App_Multi(tk.Frame):
 	@threaded
 	def send_ms(self):
 		while (self.thread):
-			res = score(self.master.master.user, self.master.master.match_res["gameID"], round(len(self.written) / (time.time() - self.start_time), 3) * 1000)
+			val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000
+			res = score(self.master.master.user, self.master.master.match_res["gameID"], val)
 			time.sleep(0.25)
 
 	@threaded
 	def receive_ms(self):
 		while (self.thread):
 			res = retrieve(self.master.master.user, self.master.master.match_res["gameID"])
+			if "player" in res:
+				self.label_advers.config(text=f"{res['player']} : {int(res['playerms']) / 1000 : .3f}cps")
 			time.sleep(0.25)
 
 
@@ -185,6 +188,10 @@ class App_Multi(tk.Frame):
 	def on_arrive(self, _):
 		self.thread = True
 		print(self.master.master.match_res)
+		self.sentence = self.master.master.match_res["sentence"]
+		self.text_update(self.sentence)
+		self.label_you.config(text=f"{self.master.master.user.name} : {0 : .3f}cps")
+		self.label_advers.config(text="...")
 		self.listen_keypresses()
 		self.send_ms()
 		self.receive_ms()
