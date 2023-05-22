@@ -1,4 +1,4 @@
-import os, sys
+import sys
 import tkinter as tk
 from _tkinter import TclError
 
