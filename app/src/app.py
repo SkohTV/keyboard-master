@@ -1,4 +1,4 @@
-import os
+import os, sys
 import tkinter as tk
 from _tkinter import TclError
 
@@ -92,11 +92,8 @@ class App(tk.Tk):
 	def on_close(self):
 		"""Shutdown le programme Python lorsqu'on ferme la fenêtre, pour éviter d'ouvrir la fenêtre de jeu"""
 		self.destroy()
-		os._exit(1)
-
-
-	def start_matchmaking(self):
-		pass
+		sys.exit()
+		#os._exit(1)
 
 
 	def send_event(self, event: str) -> None:
