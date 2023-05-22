@@ -8,16 +8,23 @@ import threading
 
 from src.connect_server import query_sentence as query
 from src.utils import threaded
+from src.app import App
 
 
 
 class App_Solo(tk.Frame):
-	def __init__(self, parent, controller):
-		"""Initialisation de l'objet"""
+	def __init__(self, parent: tk.Frame, controller: App) -> None:
+		"""Initialisation de l'objet
+
+		Args:
+			parent (tk.Frame): Objet dont la classe inhérite
+			controller (App): Classe tk.Tk principale qui controle la tk.Frame
+		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
 		self.controller = controller
 
+		# On garde en mémoire quelques states
 		self.written = []
 		self.sentence = ""
 		self.start_time = None
@@ -31,12 +38,12 @@ class App_Solo(tk.Frame):
 		self.text_entry = tk.Text(frame2, wrap=tk.WORD, width=50, height=10)
 		self.query_button = ttk.Button(frame5, text="Rechercher une phrase", command=self.query_sentence)
 		self.label_you = ttk.Label(frame4, text="")
-		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
-		self.back_button = ttk.Label(self, image=self.master.master.back_button, cursor="hand2")
-		self.reskin = ttk.Label(self, image=self.master.master.reskin, cursor="hand2")
+		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
+		self.back_button = ttk.Label(self, image=self.controller.back_button, cursor="hand2")
+		self.reskin = ttk.Label(self, image=self.controller.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
 		self.back_button.bind("<Button-1>", lambda _: self.back())
-		self.reskin.bind("<Button-1>", lambda _: self.master.master.change_skin())
+		self.reskin.bind("<Button-1>", lambda _: self.controller.change_skin())
 		self.gamemodes_var = []
 		self.gamemodes_array = []
 
@@ -101,7 +108,7 @@ class App_Solo(tk.Frame):
 					self.label_hello.config(text="Écrivez le plus vite possible !")
 				else:
 					try:
-						self.label_you.configure(text=f"{self.master.master.user.name} : {len(self.written) / (time.time() - self.start_time) : .3f}cps")
+						self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (time.time() - self.start_time) : .3f}cps")
 					except ZeroDivisionError:
 						pass
 
@@ -171,7 +178,7 @@ class App_Solo(tk.Frame):
 
 	def back(self):
 		self.reset()
-		self.master.master.external_show_frame("App_Main")
+		self.controller.external_show_frame("App_Main")
 
 
 	def reset(self):

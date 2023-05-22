@@ -1,20 +1,20 @@
-import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as font
-from _tkinter import TclError
 
 from src.connect_server import user_connection as connect
-
-
-from src.frames.app_main import App_Main
-
+from src.app import App
 
 
 
 class App_Login(tk.Frame):
-	def __init__(self, parent, controller):
-		"""Initialisation de l'objet"""
+	def __init__(self, parent: tk.Frame, controller: App) -> None:
+		"""Initialisation de l'objet\n
+
+		Args:
+			parent (tk.Frame): Objet dont la classe inhérite\n
+			controller (App): Classe tk.Tk principale qui controle la tk.Frame\n
+		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
 		self.controller = controller
@@ -51,27 +51,25 @@ class App_Login(tk.Frame):
 		frame4.pack(pady=10)
 
 
-	def interface_login(self):
+	def interface_login(self) -> None:
 		"""On fait une requête au serveur de connection d'utilisateur"""
 		res = connect(False, self.entry_username.get(), self.entry_password.get())
 		if not res:
 			self.label_status.config(text="Identifiants invalides")
 		else:
-			self.label_status.config(text="Connection réussie ! Redirection...") # Fallback, ne sera normalement pas affiché
-			self.master.master.user = res
-			#self.master.master.username.set(f"Bonjour {res.name}")
-			self.master.master.send_event("UpdateName")
-			self.controller.show_frame(App_Main)
+			self.label_status.config(text="Connection réussie ! Redirection...")
+			self.controller.user = res
+			self.controller.send_event("UpdateName")
+			self.controller.external_show_frame("App_Main")
 
 
-	def interface_register(self):
+	def interface_register(self) -> None:
 		"""On fait une requête au serveur de création d'utilisateur"""
 		res = connect(True, self.entry_username.get(), self.entry_password.get())
 		if not res:
 			self.label_status.config(text="Ce username est déjà utilisé")
 		else:
-			self.label_status.config(text="Création réussie ! Redirection...") # Fallback, ne sera normalement pas affiché
-			self.master.master.user = res
-			#self.master.master.username.set(f"Bonjour {res.name}")
-			self.master.master.send_event("UpdateName")
-			self.controller.show_frame(App_Main)
+			self.label_status.config(text="Création réussie ! Redirection...")
+			self.controller.user = res
+			self.controller.send_event("UpdateName")
+			self.controller.external_show_frame("App_Main")

@@ -9,7 +9,7 @@ from src.utils import export_gamemodes
 #	- Facilité de connection, mongoose (JS) est bien supérieur à pymongo (Python)
 
 
-
+#? Méthode d'encapsulation, uniquement utilisable via les interfaces de ce fichier
 def send(req: str, user: User, data: dict) -> requests.models.Response:
 	"""Envoi une requête vers le serveur, méthode privée utilisée via des interfaces\n
 
@@ -23,22 +23,25 @@ def send(req: str, user: User, data: dict) -> requests.models.Response:
 	"""
 	url = "http://keyboard-master.vercel.app" + "/api/send"
 
+	# Si pas d'utilisateur, on envoi "null"
 	if user == None:
 		user_pack = "null"
 	else:
 		user_pack = json.dumps({"name": user.name, "hashedPwd": user.hashed_password})
 
+	# Si pas de données, on envoi "null"
 	if data == None:
 		data = "null"
-	
+
+	# On met tout dans un paquet pour l'envoi
 	pack = {
 		"type": req,
 		"user": user_pack,
 		"pack": data
 	}
 
+	# On envoi la requête et la retourne
 	response = requests.post(url, data=pack)
-	print(response.text)
 	return response
 
 
@@ -54,20 +57,24 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 	Returns:
 		User or None: Renvoi un objet User en cas de réussite, renvoi None sinon\n
 	"""
+	# Selon la requête, soit on envoi une demande de création, soit une demande de connection
 	request = "CreateUser" if is_new else "LoginUser"
 
+	# On envoi la requête
 	data = {"name": name, "rawPwd": raw_password}
 	res = send(req=request, user=None, data=json.dumps(data))
 
+	# Si la requête n'a pas abouti, on renvoi None
 	if res.status_code != 201:
 		print(f"Erreur: {res.status_code} - {res.text}")
 		return None
 
+	# Si le serveur renvoi "Denied", on renvoi None
 	if res.text == "Denied":
 		print(f"Connection refusée")
 		return None
 	
-	print(f"Vous êtes connecté en tant que {name}")
+	# Sinon, on renvoi un objet User
 	return User(name=name, hashed_password=res.text)
 
 
@@ -84,7 +91,7 @@ def join_matchmaking(user: User, gamemodes: list) -> str:
 	"""
 	data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
 	res = send(req="JoinMatchmaking", user=user, data=data)
-	return res.text
+	return res.text # Renvoi "denied" ou l'ID de la game
 
 
 
@@ -98,7 +105,7 @@ def leave_matchmaking(user: User) -> bool:
 		bool: True si demande acceptée par le serveur, sinon False\n
 	"""
 	res = send(req="LeaveMatchmaking", user=user, data=None)
-	return res.text == "Allowed"
+	return res.text == "Allowed" # Renvoi true ou false selon si la demande a été acceptée
 
 
 
@@ -113,7 +120,7 @@ def query_sentence(gamemodes: list) -> str:
 	"""
 	data = json.dumps({"gamemodes": export_gamemodes(gamemodes)})
 	res = send(req="QuerySentence", user=None, data=data)
-	return res.text
+	return res.text # Renvoi la phrase
 
 
 
@@ -130,7 +137,7 @@ def set_score(user: User, gameID: int, score: int) -> bool:
 	"""
 	data = json.dumps({"gameID": gameID, "score": score})
 	res = send(req="SetMyScore", user=user, data=data)
-	return res.text == "Allowed"
+	return res.text == "Allowed" # Renvoi true ou false selon si la demande a été acceptée
 
 
 
@@ -148,4 +155,4 @@ def retrieve_data(user: User, gameID: int) -> dict:
 	res = send(req="RetrieveData", user=user, data=data)
 	res = json.loads(res.text)
 	res["gameID"] = gameID
-	return res
+	return res # Renvoi les données récupérées

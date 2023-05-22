@@ -5,17 +5,23 @@ import webbrowser
 
 from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, retrieve_data as retrieve
 from src.utils import threaded
-
+from src.app import App
 
 
 
 class App_Matchmaking(tk.Frame):
-	def __init__(self, parent, controller):
-		"""Initialisation de l'objet"""
+	def __init__(self, parent: tk.Frame, controller: App) -> None:
+		"""Initialisation de l'objet
+
+		Args:
+			parent (tk.Frame): Objet dont la classe inhérite
+			controller (App): Classe tk.Tk principale qui controle la tk.Frame
+		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
 		self.controller = controller
 
+		# On garde en mémoire si un thread est actif ou non
 		self.thread = False
 
 		# On crée quatre packs pour formatter l'affichage
@@ -24,12 +30,12 @@ class App_Matchmaking(tk.Frame):
 		# Définition des widgets
 		self.label_hello = ttk.Label(frame1, text="Lancez une recherche pour commencer")
 		self.query_button = ttk.Button(frame2, text="Rejoindre le matchmaking", command=self.join_or_leave)
-		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
-		self.back_button = ttk.Label(self, image=self.master.master.back_button, cursor="hand2")
-		self.reskin = ttk.Label(self, image=self.master.master.reskin, cursor="hand2")
+		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
+		self.back_button = ttk.Label(self, image=self.controller.back_button, cursor="hand2")
+		self.reskin = ttk.Label(self, image=self.controller.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
 		self.back_button.bind("<Button-1>", lambda _: self.back())
-		self.reskin.bind("<Button-1>", lambda _: self.master.master.change_skin())
+		self.reskin.bind("<Button-1>", lambda _: self.controller.change_skin())
 		self.gamemodes_var = []
 		self.gamemodes_array = []
 
@@ -64,20 +70,20 @@ class App_Matchmaking(tk.Frame):
 				gamemodes.append(self.gamemodes_array[index].cget("text"))
 		res = "Denied"
 		while res == "Denied" and self.thread:
-			res = join(self.master.master.user, gamemodes)
+			res = join(self.controller.user, gamemodes)
 
 		if not res == "Denied":
 			self.label_hello["text"] = "En attente d'un adversaire"
-			self.master.master.match_res = retrieve(self.master.master.user, res)
-			self.master.master.external_show_frame("App_Multi")
-			self.master.master.send_event("StartMulti")
+			self.controller.match_res = retrieve(self.controller.user, res)
+			self.controller.external_show_frame("App_Multi")
+			self.controller.send_event("StartMulti")
 
 
 	def join_or_leave(self):
 		if self.thread:
 			self.thread = False
 			self.query_button["text"] = "Rejoindre le matchmaking"
-			leave(self.master.master.user)
+			leave(self.controller.user)
 		else:
 			self.thread = True
 			self.query_button["text"] = "Quitter le matchmaking"
@@ -86,11 +92,11 @@ class App_Matchmaking(tk.Frame):
 
 	def back(self):
 		self.reset()
-		self.master.master.external_show_frame("App_Main")
+		self.controller.external_show_frame("App_Main")
 
 
 	def reset(self):
-		leave(self.master.master.user)
+		leave(self.controller.user)
 		self.label_hello["text"] = "Lancez une recherche pour commencer"
 		self.query_button["text"] = "Rejoindre le matchmaking"
 		[i.set(False) for i in self.gamemodes_var]

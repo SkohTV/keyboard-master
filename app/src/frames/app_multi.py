@@ -9,20 +9,24 @@ import threading
 
 from src.connect_server import retrieve_data as retrieve, set_score as score
 from src.utils import threaded
-
-
-
+from src.app import App
 
 
 
 
 class App_Multi(tk.Frame):
-	def __init__(self, parent, controller):
-		"""Initialisation de l'objet"""
+	def __init__(self, parent: tk.Frame, controller: App) -> None:
+		"""Initialisation de l'objet
+
+		Args:
+			parent (tk.Frame): Objet dont la classe inhérite
+			controller (App): Classe tk.Tk principale qui controle la tk.Frame
+		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
 		self.controller = controller
 
+		# On garde en mémoire quelques states
 		self.written = []
 		self.sentence = ""
 		self.start_time = None
@@ -36,12 +40,12 @@ class App_Multi(tk.Frame):
 		self.text_entry = tk.Text(frame2, wrap=tk.WORD, width=50, height=10)
 		self.label_you = ttk.Label(frame4, text="aaa")
 		self.label_advers = ttk.Label(frame4, text="aaa")
-		self.github_icon = ttk.Label(self, image=self.master.master.github_icon, cursor="hand2")
-		self.back_button = ttk.Label(self, image=self.master.master.back_button, cursor="hand2")
-		self.reskin = ttk.Label(self, image=self.master.master.reskin, cursor="hand2")
+		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
+		self.back_button = ttk.Label(self, image=self.controller.back_button, cursor="hand2")
+		self.reskin = ttk.Label(self, image=self.controller.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
 		self.back_button.bind("<Button-1>", lambda _: self.back())
-		self.reskin.bind("<Button-1>", lambda _: self.master.master.change_skin())
+		self.reskin.bind("<Button-1>", lambda _: self.controller.change_skin())
 		self.gamemodes_var = []
 		self.gamemodes_array = []
 
@@ -78,7 +82,7 @@ class App_Multi(tk.Frame):
 		frame5.pack(side=tk.BOTTOM)
 		frame3.place(x=600, y=(100 - frame3.winfo_height()/2), anchor=tk.NW)
 
-		self.master.master.bind("<<StartMulti>>", self.on_arrive)
+		self.controller.bind("<<StartMulti>>", self.on_arrive)
 
 
 	@threaded
@@ -108,7 +112,7 @@ class App_Multi(tk.Frame):
 					self.label_hello.config(text="Écrivez le plus vite possible !")
 				else:
 					try:
-						self.label_you.configure(text=f"{self.master.master.user.name} : {len(self.written) / (time.time() - self.start_time) : .3f}cps")
+						self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (time.time() - self.start_time) : .3f}cps")
 					except ZeroDivisionError:
 						pass
 
@@ -151,13 +155,13 @@ class App_Multi(tk.Frame):
 	def send_ms(self):
 		while (self.thread):
 			val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000
-			res = score(self.master.master.user, self.master.master.match_res["gameID"], val)
+			res = score(self.controller.user, self.controller.match_res["gameID"], val)
 			time.sleep(0.25)
 
 	@threaded
 	def receive_ms(self):
 		while (self.thread):
-			res = retrieve(self.master.master.user, self.master.master.match_res["gameID"])
+			res = retrieve(self.controller.user, self.controller.match_res["gameID"])
 			if "player" in res:
 				self.label_advers.config(text=f"{res['player']} : {int(res['playerms']) / 1000 : .3f}cps")
 			time.sleep(0.25)
@@ -172,7 +176,7 @@ class App_Multi(tk.Frame):
 
 	def back(self):
 		self.reset()
-		self.master.master.external_show_frame("App_Main")
+		self.controller.external_show_frame("App_Main")
 
 
 	def reset(self):
@@ -187,10 +191,10 @@ class App_Multi(tk.Frame):
 
 	def on_arrive(self, _):
 		self.thread = True
-		print(self.master.master.match_res)
-		self.sentence = self.master.master.match_res["sentence"]
+		print(self.controller.match_res)
+		self.sentence = self.controller.match_res["sentence"]
 		self.text_update(self.sentence)
-		self.label_you.config(text=f"{self.master.master.user.name} : {0 : .3f}cps")
+		self.label_you.config(text=f"{self.controller.user.name} : {0 : .3f}cps")
 		self.label_advers.config(text="...")
 		self.listen_keypresses()
 		self.send_ms()

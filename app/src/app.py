@@ -65,19 +65,34 @@ class App(tk.Tk):
 		self.show_frame(App_Login)
 
 
-	def show_frame(self, cont) -> None:
+	def show_frame(self, cont: tk.Frame) -> None:
+		"""Affiche une frame de la fenêtre Tkinter (voir fichiers dans frames)\n
+
+		Args:
+			cont (tk.Frame): Frame à afficher\n
+		"""
+		# On récupère la frame dans le dictionnaire
 		frame = self.frames[cont]
+
+		# Si c'est le login, on met la fenêtre en petit
 		if cont == App_Login:
 			self.title("Login")
 			self.geometry("285x155")
-		else:
+		else: # Sinon on la met en grand
 			self.title("Keyboard Master")
 			self.geometry("700x400")
+
+		# Et on l'affiche
 		frame.tkraise()
 
 
-	def external_show_frame(self, textFrame) -> None:
-		"""Fonction pour afficher une frame depuis une autre frame"""
+	def external_show_frame(self, textFrame: str) -> None:
+		"""Afficher une frame depuis une autre frame\n
+
+		Args:
+			textFrame (str): Nom en string de la fenêtre à afficher\n
+		"""
+		# Selon le str, on affiche une frame différente
 		match textFrame:
 			case "App_Main":
 				self.show_frame(App_Main)
@@ -89,17 +104,23 @@ class App(tk.Tk):
 				self.show_frame(App_Multi)
 
 
-	def on_close(self):
-		"""Shutdown le programme Python lorsqu'on ferme la fenêtre, pour éviter d'ouvrir la fenêtre de jeu"""
+	def on_close(self) -> None:
+		"""Ferme la fenêtre ET LES THREADS quand on ferme la fenêtre"""
 		self.destroy()
 		sys.exit()
 		#os._exit(1)
 
 
 	def send_event(self, event: str) -> None:
+		"""Envoi un event au niveau de la fenêtre (utilisée à partir d'une Frame)\n
+
+		Args:
+			event (str): Nom de l'event à envoyer\n
+		"""
 		self.event_generate(f"<<{event}>>")
 
 
 	def change_skin(self) -> None:
+		"""Passe au skin suivant dans la liste"""
 		self.skin_cursor = (self.skin_cursor + 1) % len(self.skins)
 		self.style.theme_use(self.skins[self.skin_cursor])
