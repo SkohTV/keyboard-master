@@ -81,8 +81,8 @@ export default async function send(req, res){
 
 			case 'SetMyScore':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
-				console.log("verified"+returnValue)
 				dataDB = await Game.findOne({'gameID': pack.gameID})
+				console.log(`${dataDB.player1} - ${dataDB.player2} - ${user.name}`)
 				if (dataDB.player1 === user.name && dataDB.player1ms < pack.score){
 					dataDB.player1ms = pack.score;
 					await dataDB.save()
