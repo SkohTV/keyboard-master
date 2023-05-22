@@ -34,7 +34,10 @@ export default async function send(req, res){
 				dataDB = await Users.find({'name': pack.name});
 				if (!dataDB.length){ returnValue = 'Denied' ; break ; }
 				allow = await comparePassword(pack.rawPwd, dataDB[0].hashedPwd);
-				returnValue = allow ? dataDB[0].hashedPwd : 'Denied' ; break ;
+				if (!allow) { returnValue = 'Denied' ; break ; }
+				returnValue = dataDB[0].hashedPwd;
+				dataDB = await Game.deleteMany({$or: [{'player1': pack.name}, {'player2': pack.name}]});
+				break;
 
 			case 'JoinMatchmaking':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
