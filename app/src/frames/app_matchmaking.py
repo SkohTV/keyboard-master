@@ -1,11 +1,7 @@
-import sys, time
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as font
-from _tkinter import TclError
 import webbrowser
-from pynput import keyboard
-import threading
 
 from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, retrieve_data as retrieve
 from src.utils import threaded

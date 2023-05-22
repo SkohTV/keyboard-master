@@ -1,8 +1,5 @@
 from typing import Callable
-import tkinter as tk
-import threading, ctypes
-from pynput import keyboard
-
+import threading
 
 
 def export_gamemodes(gamemodes: list) -> str:
@@ -17,7 +14,7 @@ def export_gamemodes(gamemodes: list) -> str:
 	return "-".join(gamemodes)
 
 
-# https://stackoverflow.com/questions/19846332/python-threading-inside-a-class
+# https://stackoverflow.com/a/19846691
 def threaded(fn: Callable) -> Callable:
 	"""Permet de passer une fonction en threading via un décorateur
 

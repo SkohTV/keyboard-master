@@ -1,11 +1,8 @@
 import os
 import tkinter as tk
-import tkinter.ttk as ttk
 from _tkinter import TclError
 
 from ttkbootstrap import Style
-
-from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, query_sentence as query
 
 from src.frames.app_login import App_Login
 from src.frames.app_main import App_Main
