@@ -82,12 +82,12 @@ export default async function send(req, res){
 			case 'SetMyScore':
 				if (!verifPassword(user.name, user.hashedPwd)){ returnValue = 'Denied' ; break ; }
 				dataDB = await Game.findOne({'gameID': pack.gameID})
-				console.log(`${dataDB.player1} - ${dataDB.player2} - ${user.name}`)
-				if (dataDB.player1 === user.name && dataDB.player1ms < pack.score){
+				console.log(`${dataDB.player1 == user.name} - ${dataDB.player2 == user.name} - ${dataDB.player1ms < pack.score} - ${dataDB.player2ms} - ${dataDB.player2m} - ${pack.score}`)
+				if (dataDB.player1 == user.name && dataDB.player1ms < pack.score){
 					dataDB.player1ms = pack.score;
 					await dataDB.save()
 					returnValue = 'Allowed' ; break ;
-				} else if (dataDB.player2 === user.name && dataDB.player2ms < pack.score){
+				} else if (dataDB.player2 == user.name && dataDB.player2ms < pack.score){
 					dataDB.player2ms = pack.score;
 					await dataDB.save()
 					returnValue = 'Allowed' ; break ;
