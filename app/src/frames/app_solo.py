@@ -8,17 +8,16 @@ import threading
 
 from src.connect_server import query_sentence as query
 from src.utils import threaded
-from src.app import App
 
 
 
 class App_Solo(tk.Frame):
-	def __init__(self, parent: tk.Frame, controller: App) -> None:
+	def __init__(self, parent: tk.Frame, controller) -> None:
 		"""Initialisation de l'objet
 
 		Args:
 			parent (tk.Frame): Objet dont la classe inhérite
-			controller (App): Classe tk.Tk principale qui controle la tk.Frame
+			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame
 		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)

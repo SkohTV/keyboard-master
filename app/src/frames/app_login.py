@@ -3,17 +3,16 @@ import tkinter.ttk as ttk
 import tkinter.font as font
 
 from src.connect_server import user_connection as connect
-from src.app import App
 
 
 
 class App_Login(tk.Frame):
-	def __init__(self, parent: tk.Frame, controller: App) -> None:
+	def __init__(self, parent: tk.Frame, controller) -> None:
 		"""Initialisation de l'objet\n
 
 		Args:
 			parent (tk.Frame): Objet dont la classe inhérite\n
-			controller (App): Classe tk.Tk principale qui controle la tk.Frame\n
+			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
 		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
