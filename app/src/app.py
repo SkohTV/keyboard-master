@@ -1,8 +1,9 @@
 import sys
 import tkinter as tk
+import tkinter.ttk as ttk
 from _tkinter import TclError
 
-from ttkbootstrap import Style
+from ttkbootstrap import Style as ttkStyle, Colors as ttkColors
 
 from src.frames.app_login import App_Login
 from src.frames.app_main import App_Main
@@ -36,10 +37,11 @@ class App(tk.Tk):
 		self.resizable(False, False)
 
 		# On gère le style via ttkbootstrap (juste un thème par défaut)
-		self.style = Style()
+		self.style = ttkStyle()
 		self.style.theme_use("darkly")
-		self.skin_cursor = 0
+		self.skin_cursor = -1
 		self.skins = ["darkly", "solar", "superhero", "cyborg", "vapor"]
+		self.change_skin()
 
 		# Le chargement de l'icône peut échouer (si l'utilisateur est sous Linux par exemple)
 		# On va donc tenter de de set l'icône, et si ça échoue on passe à la suite
@@ -107,8 +109,8 @@ class App(tk.Tk):
 	def on_close(self) -> None:
 		"""Ferme la fenêtre ET LES THREADS quand on ferme la fenêtre"""
 		self.destroy()
-		sys.exit()
-		#os._exit(1)
+		sys.exit() # Première tentative de fermeture (soft)
+		os._exit(1) # Deuxième tentative de fermeture (hard, en cas de crash)
 
 
 	def send_event(self, event: str) -> None:
@@ -124,3 +126,7 @@ class App(tk.Tk):
 		"""Passe au skin suivant dans la liste"""
 		self.skin_cursor = (self.skin_cursor + 1) % len(self.skins)
 		self.style.theme_use(self.skins[self.skin_cursor])
+
+		self.style.configure("small.TButton", foreground=self.style.colors.fg, background=self.style.colors.dark)
+		self.style.configure("big.TButton", font="Verdana 15 bold", foreground=self.style.colors.fg, background=self.style.colors.dark)
+		self.style.configure("giga.TButton", font="Tahoma 35 bold", foreground=self.style.colors.fg, background=self.style.colors.dark)

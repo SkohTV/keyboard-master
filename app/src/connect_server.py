@@ -64,14 +64,8 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 	data = {"name": name, "rawPwd": raw_password}
 	res = send(req=request, user=None, data=json.dumps(data))
 
-	# Si la requête n'a pas abouti, on renvoi None
-	if res.status_code != 201:
-		print(f"Erreur: {res.status_code} - {res.text}")
-		return None
-
-	# Si le serveur renvoi "Denied", on renvoi None
-	if res.text == "Denied":
-		print(f"Connection refusée")
+	# Si le serveur renvoi "Denied", ou qu'il y a une erreur, on renvoi None
+	if res.text == "Denied" or res.status_code != 201:
 		return None
 	
 	# Sinon, on renvoi un objet User

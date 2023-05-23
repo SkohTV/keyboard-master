@@ -28,7 +28,7 @@ class App_Matchmaking(tk.Frame):
 
 		# Définition des widgets
 		self.label_hello = ttk.Label(frame1, text="Lancez une recherche pour commencer")
-		self.query_button = ttk.Button(frame2, text="Rejoindre le matchmaking", command=self.join_or_leave)
+		self.query_button = ttk.Button(frame2, text="Rejoindre le matchmaking", command=self.join_or_leave, takefocus=0)
 		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
 		self.back_button = ttk.Label(self, image=self.controller.back_button, cursor="hand2")
 		self.reskin = ttk.Label(self, image=self.controller.reskin, cursor="hand2")
@@ -45,10 +45,11 @@ class App_Matchmaking(tk.Frame):
 
 		# Changement de certains paramètres de style (police & couleur)
 		self.label_hello["font"] = font.Font(family="Verdana", weight="bold", size=20)
+		self.query_button["style"] = "big.TButton"
 
 		# Placement des widgets dans la fenêtre
 		self.label_hello.pack(pady=20)
-		self.query_button.pack()
+		self.query_button.pack(pady=90, ipadx=50, ipady=10)
 		[i.pack(side=tk.TOP, anchor=tk.W, pady=8) for i in self.gamemodes_array]
 		[i.set(False) for i in self.gamemodes_var]
 		self.github_icon.place(x=5, y=360)
@@ -74,6 +75,7 @@ class App_Matchmaking(tk.Frame):
 		if not res == "Denied":
 			self.label_hello["text"] = "En attente d'un adversaire"
 			self.controller.match_res = retrieve(self.controller.user, res)
+			self.reset()
 			self.controller.external_show_frame("App_Multi")
 			self.controller.send_event("StartMulti")
 

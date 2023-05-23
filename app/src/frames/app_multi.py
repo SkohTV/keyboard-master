@@ -32,26 +32,19 @@ class App_Multi(tk.Frame):
 		self.thread = False
 
 		# On crée quatre packs pour formatter l'affichage
-		frame1, frame2, frame3, frame4, frame5 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
+		frame1, frame2, frame3 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
 
 		# Définition des widgets
 		self.label_hello = ttk.Label(frame1, text="Commencez quand vous êtes prêt")
 		self.text_entry = tk.Text(frame2, wrap=tk.WORD, width=50, height=10)
-		self.label_you = ttk.Label(frame4, text="aaa")
-		self.label_advers = ttk.Label(frame4, text="aaa")
+		self.label_you = ttk.Label(frame3, text="aaa")
+		self.label_advers = ttk.Label(frame3, text="aaa")
 		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
 		self.back_button = ttk.Label(self, image=self.controller.back_button, cursor="hand2")
 		self.reskin = ttk.Label(self, image=self.controller.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
 		self.back_button.bind("<Button-1>", lambda _: self.back())
 		self.reskin.bind("<Button-1>", lambda _: self.controller.change_skin())
-		self.gamemodes_var = []
-		self.gamemodes_array = []
-
-		# On peuple self.gamemodes_var et self.gamemodes_array avec les modes de jeu
-		for index, elem in enumerate(("easy", "insane")):
-			self.gamemodes_var.append(tk.BooleanVar())
-			self.gamemodes_array.append(ttk.Checkbutton(frame3, text=elem, variable=self.gamemodes_var[index], onvalue=True, offvalue=False))
 
 		# Changement de certains paramètres de style (police & couleur)
 		self.label_hello["font"] = font.Font(family="Verdana", weight="bold", size=20)
@@ -68,8 +61,6 @@ class App_Multi(tk.Frame):
 		self.text_entry.pack(side=tk.LEFT)
 		self.label_you.pack(side=tk.LEFT, padx=20)
 		self.label_advers.pack(side=tk.LEFT, padx=20)
-		[i.pack(side=tk.TOP, anchor=tk.W, pady=8) for i in self.gamemodes_array]
-		[i.set(False) for i in self.gamemodes_var]
 		self.github_icon.place(x=5, y=360)
 		self.back_button.place(x=5, y=20)
 		self.reskin.place(x=660, y=360)
@@ -77,9 +68,7 @@ class App_Multi(tk.Frame):
 		# On pack les 4 frames
 		frame1.pack()
 		frame2.pack()
-		frame4.pack(side=tk.BOTTOM, pady=30)
-		frame5.pack(side=tk.BOTTOM)
-		frame3.place(x=600, y=(100 - frame3.winfo_height()/2), anchor=tk.NW)
+		frame3.pack(side=tk.BOTTOM, pady=30)
 
 		self.controller.bind("<<StartMulti>>", self.on_arrive)
 
@@ -109,11 +98,6 @@ class App_Multi(tk.Frame):
 				if self.start_time is None:
 					self.start_time = time.time()
 					self.label_hello.config(text="Écrivez le plus vite possible !")
-				else:
-					try:
-						self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (time.time() - self.start_time) : .3f}cps")
-					except ZeroDivisionError:
-						pass
 
 				self.written.append(key)
 
@@ -147,15 +131,18 @@ class App_Multi(tk.Frame):
 
 			threading.Thread(target=stop_event).start()
 			listener.join()
-			print("Stopped")
 
 
 	@threaded
 	def send_ms(self):
 		while (self.thread):
-			val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000
-			res = score(self.controller.user, self.controller.match_res["gameID"], val)
+			self.current_time = time.time()
+			if (not self.start_time is None) and (not self.current_time is None) and (self.written):
+				self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
+				val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000
+				score(self.controller.user, self.controller.match_res["gameID"], val)
 			time.sleep(0.25)
+
 
 	@threaded
 	def receive_ms(self):
@@ -190,7 +177,6 @@ class App_Multi(tk.Frame):
 
 	def on_arrive(self, _):
 		self.thread = True
-		print(self.controller.match_res)
 		self.sentence = self.controller.match_res["sentence"]
 		self.text_update(self.sentence)
 		self.label_you.config(text=f"{self.controller.user.name} : {0 : .3f}cps")

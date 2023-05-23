@@ -26,8 +26,8 @@ class App_Main(tk.Frame):
 		# Définition des widgets
 		#self.label_hello = ttk.Label(frame1, textvariable=self.controller.username)
 		self.label_hello = ttk.Label(frame1, text=f"Bonjour null")
-		self.button_solo = tk.Button(frame2, text="Solo", command=self.button_solo)
-		self.button_versus = tk.Button(frame3, text="Versus", command=self.button_versus)
+		self.button_solo = ttk.Button(frame2, text="Solo", command=self.button_solo, takefocus=0)
+		self.button_versus = ttk.Button(frame3, text="Versus", command=self.button_versus, takefocus=0)
 		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
 		self.reskin = ttk.Label(self, image=self.controller.reskin, cursor="hand2")
 		self.github_icon.bind("<Button-1>", lambda _: webbrowser.open_new("https://github.com/SkohTV/KeyboardMaster"))
@@ -35,20 +35,20 @@ class App_Main(tk.Frame):
 
 		# Changement de certains paramètres de style (police & couleur)
 		self.label_hello["font"] = font.Font(family="Verdana", weight="bold", size=30)
-		self.button_solo.config(font=("Tahoma", 35))
-		self.button_versus.config(font=("Tahoma", 35))
+		self.button_solo["style"] = "giga.TButton"
+		self.button_versus["style"] = "giga.TButton"
 
 		# Placement des widgets dans la fenêtre
 		self.label_hello.pack(pady=20)
-		self.button_solo.pack(pady=20, ipadx=150, ipady=5)
-		self.button_versus.pack(pady=10, ipadx=150, ipady=5)
+		self.button_solo.pack(pady=15, padx=50, fill=tk.X, expand=True, ipady=15)
+		self.button_versus.pack(pady=10, padx=50, fill=tk.X, expand=True, ipady=15)
 		self.github_icon.place(x=5, y=360)
 		self.reskin.place(x=660, y=360)
 
 		# On pack les 4 frames
 		frame1.pack()
-		frame2.pack()
-		frame3.pack()
+		frame2.pack(fill=tk.X)
+		frame3.pack(fill=tk.X)
 
 		# Lorsqu'on se log, on met à jour le nom
 		self.controller.bind("<<UpdateName>>", self.update_name)
@@ -56,7 +56,6 @@ class App_Main(tk.Frame):
 
 	def button_solo(self):
 		self.controller.external_show_frame("App_Solo")
-		print(self.controller == self.controller, self.controller is self.controller)
 
 
 	def button_versus(self):

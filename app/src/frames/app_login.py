@@ -27,12 +27,14 @@ class App_Login(tk.Frame):
 		self.entry_username = ttk.Entry(frame2)
 		self.label_password = ttk.Label(frame3, text="Password :")
 		self.entry_password = ttk.Entry(frame3, show="*")
-		self.button_login = ttk.Button(frame4, text="Log in", width=10, command=self.interface_login)
-		self.button_register = ttk.Button(frame4, text="Register", width=10, command=self.interface_register)
+		self.button_login = ttk.Button(frame4, text="Log in", width=10, command=self.interface_login, takefocus=0)
+		self.button_register = ttk.Button(frame4, text="Register", width=10, command=self.interface_register, takefocus=0)
   
 		# Changement de certains paramètres de style (police & couleur)
 		self.label_status["font"] = font.Font(family="Verdana", weight="bold", size=10)
 		self.label_status.config(foreground="#89CFF0")
+		self.button_login["style"] = "small.TButton"
+		self.button_register["style"] = "small.TButton"
 
 		# Placement des widgets dans la fenêtre
 		self.label_status.pack(side=tk.TOP)

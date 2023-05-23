@@ -28,6 +28,7 @@ class App_Solo(tk.Frame):
 		self.sentence = ""
 		self.start_time = None
 		self.thread = False
+		self.current_time = None
 
 		# On crée quatre packs pour formatter l'affichage
 		frame1, frame2, frame3, frame4, frame5 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
@@ -35,7 +36,7 @@ class App_Solo(tk.Frame):
 		# Définition des widgets
 		self.label_hello = ttk.Label(frame1, text="Lancez une recherche pour commencer")
 		self.text_entry = tk.Text(frame2, wrap=tk.WORD, width=50, height=10)
-		self.query_button = ttk.Button(frame5, text="Rechercher une phrase", command=self.query_sentence)
+		self.query_button = ttk.Button(frame5, text="Rechercher une phrase", command=self.query_sentence, takefocus=0)
 		self.label_you = ttk.Label(frame4, text="")
 		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
 		self.back_button = ttk.Label(self, image=self.controller.back_button, cursor="hand2")
@@ -60,6 +61,7 @@ class App_Solo(tk.Frame):
 		self.text_entry.tag_configure("wrong-space", background="red")
 		self.text_entry.insert(tk.END, "")
 		self.text_entry.configure(state="disabled")
+		self.query_button["style"] = "small.TButton"
 
 		# Placement des widgets dans la fenêtre
 		self.label_hello.pack(pady=20)
@@ -105,11 +107,6 @@ class App_Solo(tk.Frame):
 				if self.start_time is None:
 					self.start_time = time.time()
 					self.label_hello.config(text="Écrivez le plus vite possible !")
-				else:
-					try:
-						self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (time.time() - self.start_time) : .3f}cps")
-					except ZeroDivisionError:
-						pass
 
 				self.written.append(key)
 
@@ -130,8 +127,7 @@ class App_Solo(tk.Frame):
 					if elem == self.written[index]:
 						wrong -= 1
 				if wrong == 0:
-					current_time = time.time()
-					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (current_time - self.start_time) : .3f}cps")
+					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
 					self.thread = False
 
 		with keyboard.Listener(on_press=on_press) as listener:
@@ -143,7 +139,15 @@ class App_Solo(tk.Frame):
 
 			threading.Thread(target=stop_event).start()
 			listener.join()
-			print("Stopped")
+
+
+	@threaded
+	def update_score(self):
+			while self.thread:
+				self.current_time = time.time()
+				if (not self.start_time is None) and (not self.current_time is None) and (self.written):
+					self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
+				time.sleep(0.25)
 
 
 	def query_sentence(self):
@@ -166,6 +170,7 @@ class App_Solo(tk.Frame):
 			self.text_update(self.sentence)
 			self.thread = True
 			self.listen_keypresses()
+			self.update_score()
 
 
 	def text_update(self, text):
