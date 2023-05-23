@@ -3,7 +3,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from _tkinter import TclError
 
-from ttkbootstrap import Style as ttkStyle, Colors as ttkColors
+from ttkbootstrap import Style as ttkStyle
 
 from src.frames.app_login import App_Login
 from src.frames.app_main import App_Main
@@ -124,9 +124,11 @@ class App(tk.Tk):
 
 	def change_skin(self) -> None:
 		"""Passe au skin suivant dans la liste"""
+		# On passe au thème suivant dans la liste
 		self.skin_cursor = (self.skin_cursor + 1) % len(self.skins)
 		self.style.theme_use(self.skins[self.skin_cursor])
 
+		# Et on update le style des boutons pour correspondre
 		self.style.configure("small.TButton", foreground=self.style.colors.fg, background=self.style.colors.dark)
 		self.style.configure("big.TButton", font="Verdana 15 bold", foreground=self.style.colors.fg, background=self.style.colors.dark)
 		self.style.configure("giga.TButton", font="Tahoma 35 bold", foreground=self.style.colors.fg, background=self.style.colors.dark)

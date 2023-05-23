@@ -10,11 +10,11 @@ from src.utils import threaded
 
 class App_Matchmaking(tk.Frame):
 	def __init__(self, parent: tk.Frame, controller) -> None:
-		"""Initialisation de l'objet
+		"""Initialisation de l'objet\n
 
 		Args:
-			parent (tk.Frame): Objet dont la classe inhérite
-			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame
+			parent (tk.Frame): Objet dont la classe inhérite\n
+			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
 		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
@@ -63,40 +63,48 @@ class App_Matchmaking(tk.Frame):
 
 
 	@threaded
-	def join_matchmaking(self):
+	def join_matchmaking(self) -> None:
+		"""On rejoint le matchmaking, utilisée dans un thread pour plus de contrôle"""
+		# On crée une liste de gamemodes avec ceux sélectionnés
 		gamemodes = []
 		for index, elem in enumerate(self.gamemodes_var):
 			if elem.get():
 				gamemodes.append(self.gamemodes_array[index].cget("text"))
+
+		# Tant que les demandes sont refusées, on fait une demande de rejoindre le matchmaking
 		res = "Denied"
 		while res == "Denied" and self.thread:
 			res = join(self.controller.user, gamemodes)
 
+		# Si la demande est acceptée, on passe en mode multijoueur
 		if not res == "Denied":
 			self.label_hello["text"] = "En attente d'un adversaire"
-			self.controller.match_res = retrieve(self.controller.user, res)
+			self.controller.match_res = retrieve(self.controller.user, res) # Récupération des données de la game
 			self.reset()
-			self.controller.external_show_frame("App_Multi")
+			self.controller.external_show_frame("App_Multi") # Affichage de la frame multijoueur
 			self.controller.send_event("StartMulti")
 
 
-	def join_or_leave(self):
-		if self.thread:
-			self.thread = False
+	def join_or_leave(self) -> None:
+		"""Gère le bouton de join/leave matchmaking"""
+		if self.thread: # Si bouton cliqué, et thread actif
+			self.thread = False # On quite le matchmaking
 			self.query_button["text"] = "Rejoindre le matchmaking"
 			leave(self.controller.user)
-		else:
-			self.thread = True
+		else: # Sinon
+			self.thread = True # On le rejoint
 			self.query_button["text"] = "Quitter le matchmaking"
 			self.join_matchmaking()
 
 
-	def back(self):
+	def back(self) -> None:
+		"""Bouton de retour arrière"""
 		self.reset()
 		self.controller.external_show_frame("App_Main")
 
 
-	def reset(self):
+	def reset(self) -> None:
+		"""Fonction de reset pour remettre la fenêtre dans un état initial"""
 		leave(self.controller.user)
 		self.label_hello["text"] = "Lancez une recherche pour commencer"
 		self.query_button["text"] = "Rejoindre le matchmaking"

@@ -15,11 +15,11 @@ from src.utils import threaded
 
 class App_Multi(tk.Frame):
 	def __init__(self, parent: tk.Frame, controller) -> None:
-		"""Initialisation de l'objet
+		"""Initialisation de l'objet\n
 
 		Args:
-			parent (tk.Frame): Objet dont la classe inhérite
-			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame
+			parent (tk.Frame): Objet dont la classe inhérite\n
+			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
 		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
@@ -70,23 +70,31 @@ class App_Multi(tk.Frame):
 		frame2.pack()
 		frame3.pack(side=tk.BOTTOM, pady=30)
 
+		# Lorsqu'un match est trouvé, on charge cette fenêtre
 		self.controller.bind("<<StartMulti>>", self.on_arrive)
 
 
 	@threaded
-	def listen_keypresses(self):
+	def listen_keypresses(self) -> None:
+		"""Ecoute et réagit aux touches pressées pour le jeu"""
 
-		def on_press(key):
-			if key == keyboard.Key.space:
+		def on_press(key: keyboard.Key) -> None:
+			"""Fonction appelée par le listener lorsqu'une touche est pressée
+
+			Args:
+				key (keyboard.Key): Touche pressée
+			"""
+			if key == keyboard.Key.space: # Touche = espace
 				key = " "
-			elif key == keyboard.Key.backspace:
+			elif key == keyboard.Key.backspace: # Touche = backspace (supprimer)
 				key = "backspace"
 			else:
-				try:
+				try: # Touche = touche alphanumérique 
 					key = key.char
-				except AttributeError:
+				except AttributeError: # Touche = autre truc qu'on s'en fiche
 					return
 
+			# Si backspace, alors on remove un item de la liste de trucs écrit
 			if key == "backspace":
 				if self.written:
 					for i in ("good", "wrong", "empty", "wrong-space"):
@@ -94,78 +102,92 @@ class App_Multi(tk.Frame):
 					self.written.pop()
 				return
 
+			# Sinon, on n'as pas fini d'écrire
 			elif len(self.written) < len(self.sentence):
-				if self.start_time is None:
+				if self.start_time is None: # Si c'est la PREMIERE fois qu'on écrit
 					self.start_time = time.time()
 					self.label_hello.config(text="Écrivez le plus vite possible !")
 
+				# On ajoute la touche alphanumérique (ou espace) à la liste
 				self.written.append(key)
 
+			# On remove tous les tags de la lettre qu'on viens d'écrire
 			for i in ("good", "wrong", "empty", "wrong-space"):
 				self.text_entry.tag_remove(i, f"1.{len(self.written)-1}", f"1.{len(self.written)}")
 
-			if key == self.sentence[len(self.written)-1]:
+			if key == self.sentence[len(self.written)-1]: # Si c'est la bonne lettre
 				self.text_entry.tag_add("good", f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-			else:
-				if self.sentence[len(self.written)-1] == " " or not self.sentence[len(self.written)-1].isalnum():
+			else: # Si c'est la mauvaise lettre
+				if self.sentence[len(self.written)-1] == " " or not self.sentence[len(self.written)-1].isalnum(): # Si c'est un alphanumérique
 					self.text_entry.tag_add("wrong-space", f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-				else:
+				else: # Si c'est un espace
 					self.text_entry.tag_add("wrong", f"1.{len(self.written)-1}", f"1.{len(self.written)}")
 
+			# Si tout est écrit, on check si tout est bon
 			if len(self.written) >= len(self.sentence):
 				wrong = len(self.sentence)
 				for index, elem in enumerate(self.sentence):
 					if elem == self.written[index]:
 						wrong -= 1
 				if wrong == 0:
-					current_time = time.time()
-					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (current_time - self.start_time) : .3f}cps")
+					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
 					self.thread = False
 
+		# On crée un listener, pour écouter les touches
 		with keyboard.Listener(on_press=on_press) as listener:
-			def stop_event():
+			def stop_event(): # Fonction stop event ici, afin d'être appelable dans la closure du with
 				self.thread = True
 				while self.thread:
 					time.sleep(0.01)
 				listener.stop()
 
+			# On démarre un thread, il est stoppé tout seul quand self.thread = False
 			threading.Thread(target=stop_event).start()
 			listener.join()
 
 
 	@threaded
-	def send_ms(self):
-		while (self.thread):
+	def send_ms(self) -> None:
+		"""Tous les 0.25s, on update notre score"""
+		while self.thread: # On update tant que self.thread = True
 			self.current_time = time.time()
-			if (not self.start_time is None) and (not self.current_time is None) and (self.written):
-				self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
-				val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000
-				score(self.controller.user, self.controller.match_res["gameID"], val)
+			if (not self.start_time is None) and (not self.current_time is None) and (self.written): # On affiche ET envoi notre score SI le temps est calculable
+				self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (self.current_time - self.start_time) : .3f}cps") # Affichage du score
+				val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000 # Valeur à envoyer
+				score(self.controller.user, self.controller.match_res["gameID"], val) # On envoi notre score ici
 			time.sleep(0.25)
 
 
 	@threaded
-	def receive_ms(self):
-		while (self.thread):
+	def receive_ms(self) -> None:
+		"""Toutes les 0.25s, on envoit au serveur une demande d'obtention des données de la game"""
+		while self.thread: # On demande tant que self.thread = True
 			res = retrieve(self.controller.user, self.controller.match_res["gameID"])
-			if "player" in res:
+			if "player" in res: # player ne sera pas là si le second joueur ne s'est pas encore add
 				self.label_advers.config(text=f"{res['player']} : {int(res['playerms']) / 1000 : .3f}cps")
 			time.sleep(0.25)
 
 
-	def text_update(self, text):
+	def text_update(self, text: str) -> None:
+		"""Update la widget text avec un nouveau texte\n
+
+		Args:
+			text (str): Nouveau texte à afficher\n
+		"""
 		self.text_entry.configure(state="normal")
 		self.text_entry.delete("1.0", tk.END)
 		self.text_entry.insert(tk.END, text)
 		self.text_entry.configure(state="disabled")
 
 
-	def back(self):
+	def back(self) -> None:
+		"""Bouton de retour arrière"""
 		self.reset()
 		self.controller.external_show_frame("App_Main")
 
 
 	def reset(self):
+		"""Fonction de reset pour remettre la fenêtre dans un état initial"""
 		self.thread = False
 		self.written = []
 		self.sentence = ""
@@ -175,12 +197,17 @@ class App_Multi(tk.Frame):
 		self.text_update("")
 
 
-	def on_arrive(self, _):
+	def on_arrive(self, _: tk.Event) -> None:
+		"""On charge la fenêtre lorsqu'un match est accepté
+
+		Args:
+			_ (tk.Event): Event tkinter (on l'ignore)
+		"""
 		self.thread = True
 		self.sentence = self.controller.match_res["sentence"]
 		self.text_update(self.sentence)
 		self.label_you.config(text=f"{self.controller.user.name} : {0 : .3f}cps")
 		self.label_advers.config(text="...")
-		self.listen_keypresses()
-		self.send_ms()
-		self.receive_ms()
+		self.listen_keypresses() # On commence à écouter les touches
+		self.send_ms() # On commence l'envoi de données
+		self.receive_ms() # On commence la réception de données

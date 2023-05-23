@@ -3,18 +3,15 @@ import tkinter.ttk as ttk
 import tkinter.font as font
 import webbrowser
 
-from src.frames.app_solo import App_Solo
-from src.frames.app_matchmaking import App_Matchmaking
-
 
 
 class App_Main(tk.Frame):
 	def __init__(self, parent: tk.Frame, controller) -> None:
-		"""Initialisation de l'objet
+		"""Initialisation de l'objet\n
 
 		Args:
-			parent (tk.Frame): Objet dont la classe inhérite
-			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame
+			parent (tk.Frame): Objet dont la classe inhérite\n
+			controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
 		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
@@ -24,7 +21,6 @@ class App_Main(tk.Frame):
 		frame1, frame2, frame3 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
 
 		# Définition des widgets
-		#self.label_hello = ttk.Label(frame1, textvariable=self.controller.username)
 		self.label_hello = ttk.Label(frame1, text=f"Bonjour null")
 		self.button_solo = ttk.Button(frame2, text="Solo", command=self.button_solo, takefocus=0)
 		self.button_versus = ttk.Button(frame3, text="Versus", command=self.button_versus, takefocus=0)
@@ -54,13 +50,20 @@ class App_Main(tk.Frame):
 		self.controller.bind("<<UpdateName>>", self.update_name)
 
 
-	def button_solo(self):
+	def button_solo(self) -> None:
+		"""Affiche la frame de jeu solo"""
 		self.controller.external_show_frame("App_Solo")
 
 
-	def button_versus(self):
+	def button_versus(self) -> None:
+		"""Affiche la frame de matchmaking"""
 		self.controller.external_show_frame("App_Matchmaking")
 
 
-	def update_name(self, _):
+	def update_name(self, _: tk.Event) -> None:
+		"""Update le nom de l'utilisateur avec qui on vient de se connecter (appelée via event & bind)\n
+
+		Args:
+			_ (tk.Event): Event tkinter (on l'ignore)
+		"""
 		self.label_hello.config(text=f"Bonjour {self.controller.user.name}")

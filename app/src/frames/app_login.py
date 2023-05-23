@@ -54,10 +54,11 @@ class App_Login(tk.Frame):
 
 	def interface_login(self) -> None:
 		"""On fait une requête au serveur de connection d'utilisateur"""
+		# Envoi de la requête
 		res = connect(False, self.entry_username.get(), self.entry_password.get())
-		if not res:
+		if not res: # Refusé
 			self.label_status.config(text="Identifiants invalides")
-		else:
+		else: # Accepté
 			self.label_status.config(text="Connection réussie ! Redirection...")
 			self.controller.user = res
 			self.controller.send_event("UpdateName")
@@ -66,10 +67,11 @@ class App_Login(tk.Frame):
 
 	def interface_register(self) -> None:
 		"""On fait une requête au serveur de création d'utilisateur"""
+		# Envoi de la requête
 		res = connect(True, self.entry_username.get(), self.entry_password.get())
-		if not res:
+		if not res: # Refusé
 			self.label_status.config(text="Ce username est déjà utilisé")
-		else:
+		else: # Accepté
 			self.label_status.config(text="Création réussie ! Redirection...")
 			self.controller.user = res
 			self.controller.send_event("UpdateName")
