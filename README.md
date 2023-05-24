@@ -15,7 +15,7 @@
 
 ## Structure du projet
 
-```
+``
 ├── README.md             # Documentation du projet (vous êtes ico)
 ├── .editorconfig         # Configuration de l'éditeur de texte
 ├── .gitignore            # Fichier à ignorer pour git
@@ -48,15 +48,3 @@ Pour lancer ce projet, vous aurez besoin de :
 1. Télécharger une release du projet disponible [ici]().
 2. Installer les packages nécessaires avec la commande : `py -m pip install -r requirements.txt`
 3. Lancer le fichier principal avec la commande : `py main.py`
-
-<br>
-
-
-
-
-
-## Fonctionnement & algos
-Blablabla
-
-
-
