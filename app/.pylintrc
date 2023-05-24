@@ -1,0 +1,15 @@
+[FORMAT]
+indent-string='	'
+
+disable=E0401, C0301, R0902, R0903, E0202, W0106, R0912, R0901, R0801
+
+
+;import-error (E0401)							# Faux positif sur les imports dans des les fichiers
+;max-line-length (C0301)					# Je me fiche de cette règle
+;max-attributes (R0902)						# Pour les classes custom tkinter
+;too-few-public-methods (R0903)		# Pour les classes custom tkinter
+;method-hidden (E0202)						# Faux positif dans src.frames.app_main sur les fonctions des boutons
+;expression-not-assigned (W0106)	# List comprehensions dans src.frames.app_matchmaking
+;too-many-branches (R0912)				# Fonction listen_keypresses dans utils
+;too-many-ancestors (R0901)				# Multi inhéritance dans solo et multi
+;similar-lines (R0801)						# Similarités dans les frames (extrêmement difficile à patch sans dégrader la lisibilité)

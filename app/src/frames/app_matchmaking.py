@@ -1,6 +1,20 @@
+"""
+Frame de matchmaking
+===========
+
+L'application est composée de 5 frames, chacune étant une page de l'application
+
+Contenu :
+---------
+- AppMatchmaking : Frame de matchmaking
+
+"""
+
+
+
 import tkinter as tk
-import tkinter.ttk as ttk
-import tkinter.font as font
+from tkinter import ttk
+from tkinter import font
 import webbrowser
 
 from src.connect_server import join_matchmaking as join, leave_matchmaking as leave, retrieve_data as retrieve
@@ -8,7 +22,29 @@ from src.utils import threaded
 
 
 
-class App_Matchmaking(tk.Frame):
+class AppMatchmaking(tk.Frame):
+	"""
+	Frame de matchmaking\n
+
+	Attributes:
+		controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
+		label_hello (ttk.Label): Label de texte de bienvenue\n
+		query_button (ttk.Button): Bouton de recherche\n
+		github_icon (ttk.Label): Label de l'icône GitHub\n
+		back_button (ttk.Label): Label de l'icône de retour\n
+		reskin (ttk.Label): Label de l'icône de reskin\n
+		gamemodes_var (list): Liste des modes de jeu actifs\n
+		gamemodes_array (list): Liste des widgets mode de jeu\n
+
+	Methods:
+		__init__: Initialise l'objet\n
+		join_matchmaking: Rejoint le matchmaking (envoi la demande au serveur)\n
+		join_or_leave: Rejoint ou quitte le matchmaking\n
+		leave_matchmaking: Quitte le matchmaking\n
+		back: Retourne à la page précédente\n
+		reset: Réinitialise la page\n
+	"""
+
 	def __init__(self, parent: tk.Frame, controller) -> None:
 		"""Initialisation de l'objet\n
 
@@ -62,6 +98,7 @@ class App_Matchmaking(tk.Frame):
 		frame3.place(x=600, y=(100 - frame3.winfo_height()/2), anchor=tk.NW)
 
 
+
 	@threaded
 	def join_matchmaking(self) -> None:
 		"""On rejoint le matchmaking, utilisée dans un thread pour plus de contrôle"""
@@ -77,12 +114,13 @@ class App_Matchmaking(tk.Frame):
 			res = join(self.controller.user, gamemodes)
 
 		# Si la demande est acceptée, on passe en mode multijoueur
-		if not res == "Denied":
+		if res != "Denied":
 			self.label_hello["text"] = "En attente d'un adversaire"
 			self.controller.match_res = retrieve(self.controller.user, res) # Récupération des données de la game
 			self.reset()
-			self.controller.external_show_frame("App_Multi") # Affichage de la frame multijoueur
+			self.controller.external_show_frame("AppMulti") # Affichage de la frame multijoueur
 			self.controller.send_event("StartMulti")
+
 
 
 	def join_or_leave(self) -> None:
@@ -97,10 +135,12 @@ class App_Matchmaking(tk.Frame):
 			self.join_matchmaking()
 
 
+
 	def back(self) -> None:
 		"""Bouton de retour arrière"""
 		self.reset()
-		self.controller.external_show_frame("App_Main")
+		self.controller.external_show_frame("AppMain")
+
 
 
 	def reset(self) -> None:
@@ -109,3 +149,4 @@ class App_Matchmaking(tk.Frame):
 		self.label_hello["text"] = "Lancez une recherche pour commencer"
 		self.query_button["text"] = "Rejoindre le matchmaking"
 		[i.set(False) for i in self.gamemodes_var]
+		map(lambda i: i.set(False), self.gamemodes_var)

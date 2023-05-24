@@ -1,12 +1,45 @@
+"""
+Frame de connexion
+===========
+
+L'application est composée de 5 frames, chacune étant une page de l'application
+
+Contenu :
+---------
+- AppLogin : Frame de connexion
+
+"""
+
+
+
 import tkinter as tk
-import tkinter.ttk as ttk
-import tkinter.font as font
+from tkinter import ttk
+from tkinter import font
 
 from src.connect_server import user_connection as connect
 
 
 
-class App_Login(tk.Frame):
+class AppLogin(tk.Frame):
+	"""
+	Frame de connexion\n
+
+	Attributes:
+		controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
+		label_status (ttk.Label): Label d'état de connexion\n
+		label_username (ttk.Label): Label de texte username\n
+		entry_username (ttk.Entry): Entrée de l'username\n
+		label_password (ttk.Label): Label de texte mot de passe\n
+		entry_password (ttk.Entry): Entrée du mot de passe\n
+		button_login (ttk.Button): Bouton de connexion\n
+		button_register (ttk.Button): Bouton d'inscription\n
+
+	Methods:
+		__init__: Initialise l'objet\n
+		interface_login: Interface de connexion\n
+		interface_register: Interface d'inscription\n
+	"""
+
 	def __init__(self, parent: tk.Frame, controller) -> None:
 		"""Initialisation de l'objet\n
 
@@ -29,7 +62,7 @@ class App_Login(tk.Frame):
 		self.entry_password = ttk.Entry(frame3, show="*")
 		self.button_login = ttk.Button(frame4, text="Log in", width=10, command=self.interface_login, takefocus=0)
 		self.button_register = ttk.Button(frame4, text="Register", width=10, command=self.interface_register, takefocus=0)
-  
+
 		# Changement de certains paramètres de style (police & couleur)
 		self.label_status["font"] = font.Font(family="Verdana", weight="bold", size=10)
 		self.label_status.config(foreground="#89CFF0")
@@ -52,6 +85,7 @@ class App_Login(tk.Frame):
 		frame4.pack(pady=10)
 
 
+
 	def interface_login(self) -> None:
 		"""On fait une requête au serveur de connection d'utilisateur"""
 		# Envoi de la requête
@@ -62,7 +96,8 @@ class App_Login(tk.Frame):
 			self.label_status.config(text="Connection réussie ! Redirection...")
 			self.controller.user = res
 			self.controller.send_event("UpdateName")
-			self.controller.external_show_frame("App_Main")
+			self.controller.external_show_frame("AppMain")
+
 
 
 	def interface_register(self) -> None:
@@ -75,4 +110,4 @@ class App_Login(tk.Frame):
 			self.label_status.config(text="Création réussie ! Redirection...")
 			self.controller.user = res
 			self.controller.send_event("UpdateName")
-			self.controller.external_show_frame("App_Main")
+			self.controller.external_show_frame("AppMain")

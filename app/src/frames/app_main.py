@@ -1,11 +1,45 @@
+"""
+Frame de choix du mode de jeu
+===========
+
+L'application est composée de 5 frames, chacune étant une page de l'application
+
+Contenu :
+---------
+- AppMain : Frame de choix du mode de jeu
+
+"""
+
+
+
 import tkinter as tk
-import tkinter.ttk as ttk
-import tkinter.font as font
+from tkinter import ttk
+from tkinter import font
 import webbrowser
 
 
 
-class App_Main(tk.Frame):
+class AppMain(tk.Frame):
+	"""
+	Frame de choix du mode de jeu\n
+
+	Attributes:
+		controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
+		label_hello (ttk.Label): Label de bienvenue\n
+		button_solo (ttk.Button): Bouton de jeu solo\n
+		button_versus (ttk.Button): Bouton de jeu versus\n
+		github_icon (ttk.Label): Label de l'icône GitHub\n
+		reskin (ttk.Label): Label de l'icône de reskin\n
+		github_icon (ttk.Label): Label de l'icône GitHub\n
+		reskin (ttk.Label): Label de l'icône de reskin\n
+
+	Methods:
+		__init__: Initialise l'objet\n
+		button_solo: Bouton de jeu solo\n
+		button_versus: Bouton de jeu versus\n
+		update_name: Met à jour le nom de l'utilisateur\n
+	"""
+
 	def __init__(self, parent: tk.Frame, controller) -> None:
 		"""Initialisation de l'objet\n
 
@@ -21,7 +55,7 @@ class App_Main(tk.Frame):
 		frame1, frame2, frame3 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
 
 		# Définition des widgets
-		self.label_hello = ttk.Label(frame1, text=f"Bonjour null")
+		self.label_hello = ttk.Label(frame1, text="Bonjour null")
 		self.button_solo = ttk.Button(frame2, text="Solo", command=self.button_solo, takefocus=0)
 		self.button_versus = ttk.Button(frame3, text="Versus", command=self.button_versus, takefocus=0)
 		self.github_icon = ttk.Label(self, image=self.controller.github_icon, cursor="hand2")
@@ -50,14 +84,17 @@ class App_Main(tk.Frame):
 		self.controller.bind("<<UpdateName>>", self.update_name)
 
 
+
 	def button_solo(self) -> None:
 		"""Affiche la frame de jeu solo"""
-		self.controller.external_show_frame("App_Solo")
+		self.controller.external_show_frame("AppSolo")
+
 
 
 	def button_versus(self) -> None:
 		"""Affiche la frame de matchmaking"""
-		self.controller.external_show_frame("App_Matchmaking")
+		self.controller.external_show_frame("AppMatchmaking")
+
 
 
 	def update_name(self, _: tk.Event) -> None:

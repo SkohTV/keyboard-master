@@ -1,18 +1,58 @@
+"""
+Frame de match multijoueur
+===========
+
+L'application est composée de 5 frames, chacune étant une page de l'application
+
+Contenu :
+---------
+- AppMulti : Frame de match multijoueur
+
+"""
+
+
+
 import time
 import tkinter as tk
-import tkinter.ttk as ttk
-import tkinter.font as font
+from tkinter import ttk
+from tkinter import font
 import webbrowser
-from pynput import keyboard
-import threading
 
 from src.connect_server import retrieve_data as retrieve, set_score as score
-from src.utils import threaded
+from src.utils import threaded, WrapListener
 
 
 
 
-class App_Multi(tk.Frame):
+class AppMulti(tk.Frame, WrapListener):
+	"""
+	Frame de match multijoueur\n
+
+	Attributes:
+		controller (src.app.App): Classe tk.Tk principale qui controle la tk.Frame\n
+		written (list): Liste des caractères écrits\n
+		sentence (str): Phrase à écrire\n
+		start_time (float): Temps de début de la partie\n
+		thread (bool): Si un thread est actif ou non\n
+		current_time (float): Temps actuel\n
+		label_hello (ttk.Label): Label de texte de bienvenue\n
+		text_entry (tk.Text): Zone de texte pour écrire\n
+		label_you (ttk.Label): Label de texte "Vous"\n
+		label_advers (ttk.Label): Label de texte "Adversaire"\n
+		github_icon (ttk.Label): Label de l'icone GitHub\n
+		back_button (ttk.Label): Label de l'icone de retour\n
+		reskin (ttk.Label): Label de l'icone de reskin\n
+
+	Methods:
+		__init__: Initialise l'objet\n
+		send_ms: Envoie les données au serveur\n
+		receive_ms: Reçoit les données du serveur\n
+		text_update: Met à jour la phrase\n
+		back: Retourne à la page précédente\n
+		reset: Réinitialise la page\n
+		on_arrive: Quand on arrive sur la page\n
+	"""
+
 	def __init__(self, parent: tk.Frame, controller) -> None:
 		"""Initialisation de l'objet\n
 
@@ -22,6 +62,7 @@ class App_Multi(tk.Frame):
 		"""
 		# On crée une frame Tkinter
 		tk.Frame.__init__(self, parent)
+		WrapListener.__init__(self)
 		self.controller = controller
 
 		# On garde en mémoire quelques states
@@ -29,6 +70,7 @@ class App_Multi(tk.Frame):
 		self.sentence = ""
 		self.start_time = None
 		self.thread = False
+		self.current_time = None
 
 		# On crée quatre packs pour formatter l'affichage
 		frame1, frame2, frame3 = ttk.Frame(self), ttk.Frame(self), ttk.Frame(self)
@@ -73,77 +115,6 @@ class App_Multi(tk.Frame):
 		self.controller.bind("<<StartMulti>>", self.on_arrive)
 
 
-	@threaded
-	def listen_keypresses(self) -> None:
-		"""Ecoute et réagit aux touches pressées pour le jeu"""
-
-		def on_press(key: keyboard.Key) -> None:
-			"""Fonction appelée par le listener lorsqu'une touche est pressée
-
-			Args:
-				key (keyboard.Key): Touche pressée
-			"""
-			if key == keyboard.Key.space: # Touche = espace
-				key = " "
-			elif key == keyboard.Key.backspace: # Touche = backspace (supprimer)
-				key = "backspace"
-			else:
-				try: # Touche = touche alphanumérique 
-					key = key.char
-				except AttributeError: # Touche = autre truc qu'on s'en fiche
-					return
-
-			# Si backspace, alors on remove un item de la liste de trucs écrit
-			if key == "backspace":
-				if self.written:
-					for i in ("good", "wrong", "empty", "wrong-space"):
-						self.text_entry.tag_remove(i, f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-					self.written.pop()
-				return
-
-			# Sinon, on n'as pas fini d'écrire
-			elif len(self.written) < len(self.sentence):
-				if self.start_time is None: # Si c'est la PREMIERE fois qu'on écrit
-					self.start_time = time.time()
-					self.label_hello.config(text="Écrivez le plus vite possible !")
-
-				# On ajoute la touche alphanumérique (ou espace) à la liste
-				self.written.append(key)
-
-			# On remove tous les tags de la lettre qu'on viens d'écrire
-			for i in ("good", "wrong", "empty", "wrong-space"):
-				self.text_entry.tag_remove(i, f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-
-			if key == self.sentence[len(self.written)-1]: # Si c'est la bonne lettre
-				self.text_entry.tag_add("good", f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-			else: # Si c'est la mauvaise lettre
-				if self.sentence[len(self.written)-1] == " " or not self.sentence[len(self.written)-1].isalnum(): # Si c'est un alphanumérique
-					self.text_entry.tag_add("wrong-space", f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-				else: # Si c'est un espace
-					self.text_entry.tag_add("wrong", f"1.{len(self.written)-1}", f"1.{len(self.written)}")
-
-			# Si tout est écrit, on check si tout est bon
-			if len(self.written) >= len(self.sentence):
-				wrong = len(self.sentence)
-				for index, elem in enumerate(self.sentence):
-					if elem == self.written[index]:
-						wrong -= 1
-				if wrong == 0:
-					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
-					self.thread = False
-
-		# On crée un listener, pour écouter les touches
-		with keyboard.Listener(on_press=on_press) as listener:
-			def stop_event(): # Fonction stop event ici, afin d'être appelable dans la closure du with
-				self.thread = True
-				while self.thread:
-					time.sleep(0.01)
-				listener.stop()
-
-			# On démarre un thread, il est stoppé tout seul quand self.thread = False
-			threading.Thread(target=stop_event).start()
-			listener.join()
-
 
 	@threaded
 	def send_ms(self) -> None:
@@ -157,6 +128,7 @@ class App_Multi(tk.Frame):
 			time.sleep(0.25)
 
 
+
 	@threaded
 	def receive_ms(self) -> None:
 		"""Toutes les 0.25s, on envoit au serveur une demande d'obtention des données de la game"""
@@ -165,6 +137,7 @@ class App_Multi(tk.Frame):
 			if "player" in res: # player ne sera pas là si le second joueur ne s'est pas encore add
 				self.label_advers.config(text=f"{res['player']} : {int(res['playerms']) / 1000 : .3f}cps")
 			time.sleep(0.25)
+
 
 
 	def text_update(self, text: str) -> None:
@@ -179,10 +152,12 @@ class App_Multi(tk.Frame):
 		self.text_entry.configure(state="disabled")
 
 
+
 	def back(self) -> None:
 		"""Bouton de retour arrière"""
 		self.reset()
-		self.controller.external_show_frame("App_Main")
+		self.controller.external_show_frame("AppMain")
+
 
 
 	def reset(self):
@@ -196,11 +171,12 @@ class App_Multi(tk.Frame):
 		self.text_update("")
 
 
+
 	def on_arrive(self, _: tk.Event) -> None:
-		"""On charge la fenêtre lorsqu'un match est accepté
+		"""On charge la fenêtre lorsqu'un match est accepté\n
 
 		Args:
-			_ (tk.Event): Event tkinter (on l'ignore)
+			_ (tk.Event): Event tkinter (on l'ignore)\n
 		"""
 		self.thread = True
 		self.sentence = self.controller.match_res["sentence"]

@@ -1,22 +1,56 @@
+"""
+Application principale
+===========
+
+L'application est composée de 5 frames, chacune étant une page de l'application
+
+Contenu :
+---------
+- App : Classe principale de l'application
+
+"""
+
+
+
 import sys
 import tkinter as tk
-import tkinter.ttk as ttk
-from _tkinter import TclError
 
 from ttkbootstrap import Style as ttkStyle
 
-from src.frames.app_login import App_Login
-from src.frames.app_main import App_Main
-from src.frames.app_solo import App_Solo
-from src.frames.app_matchmaking import App_Matchmaking
-from src.frames.app_multi import App_Multi
+from src.frames.app_login import AppLogin
+from src.frames.app_main import AppMain
+from src.frames.app_solo import AppSolo
+from src.frames.app_matchmaking import AppMatchmaking
+from src.frames.app_multi import AppMulti
 
 from src.utils import User
 
 
 
 class App(tk.Tk):
-	def __init__(self) -> str:
+	"""
+	Classe principale de l'application\n
+
+	Attributes:
+		user (User): Objet utilisateur connecté\n
+		match_res (dict): Données de la partie en cours\n
+		github_icon (PhotoImage): Icône de GitHub\n
+		back_button (PhotoImage): Icône de retour\n
+		reskin (PhotoImage): Icône de changement de skin\n
+		style (ttkStyle): Style de l'application\n
+		skin_cursor (int): Curseur pour la sélection du skin\n
+		skins (list): Liste des skins disponibles\n
+
+	Methods:
+		__init__: Initialise l'objet\n
+		show_frame: Affiche une frame\n
+		external_show_frame: Affiche une frame depuis une autre frame\n
+		on_close: Ferme l'application\n
+		send_event: Envoie un event à une frame\n
+		change_skin: Change le skin de l'application\n
+	"""
+
+	def __init__(self) -> None:
 		"""Initialisation de l'objet"""
 		# On utilise l'init de l'objet Tkinter de base
 		tk.Tk.__init__(self)
@@ -24,7 +58,7 @@ class App(tk.Tk):
 		# On gardera l'utilisateur dans la classe, pour y accéder plus facilement (global == mauvaise pratique)
 		self.user = User()
 		self.match_res = None
-  
+
 		# Valeurs réutilisées dans des frames, nécessaires ici pour y accéder
 		self.github_icon = tk.PhotoImage(file="ico/github.png")
 		self.back_button = tk.PhotoImage(file="ico/back.png")
@@ -47,7 +81,7 @@ class App(tk.Tk):
 		# On va donc tenter de de set l'icône, et si ça échoue on passe à la suite
 		try:
 			self.iconbitmap("ico/keyboard.ico")
-		except TclError:
+		except tk.TclError:
 			pass
 
 		# On crée un pack pour englober la frame
@@ -58,13 +92,13 @@ class App(tk.Tk):
 
 		# On ajoute les frames à un dictionnaire
 		self.frames = {}
-		for F in (App_Login, App_Main, App_Solo, App_Matchmaking, App_Multi):
-			frame = F(container, self)
-			self.frames[F] = frame
+		for item in (AppLogin, AppMain, AppSolo, AppMatchmaking, AppMulti):
+			frame = item(container, self)
+			self.frames[item] = frame
 			frame.grid(row=0, column=0, sticky="nsew")
 
 		# On affiche la frame de login
-		self.show_frame(App_Login)
+		self.show_frame(AppLogin)
 
 
 	def show_frame(self, cont: tk.Frame) -> None:
@@ -77,7 +111,7 @@ class App(tk.Tk):
 		frame = self.frames[cont]
 
 		# Si c'est le login, on met la fenêtre en petit
-		if cont == App_Login:
+		if cont == AppLogin:
 			self.title("Login")
 			self.geometry("285x155")
 		else: # Sinon on la met en grand
@@ -88,29 +122,28 @@ class App(tk.Tk):
 		frame.tkraise()
 
 
-	def external_show_frame(self, textFrame: str) -> None:
+	def external_show_frame(self, text_frame: str) -> None:
 		"""Afficher une frame depuis une autre frame\n
 
 		Args:
-			textFrame (str): Nom en string de la fenêtre à afficher\n
+			text_frame (str): Nom en string de la fenêtre à afficher\n
 		"""
 		# Selon le str, on affiche une frame différente
-		match textFrame:
-			case "App_Main":
-				self.show_frame(App_Main)
-			case "App_Solo":
-				self.show_frame(App_Solo)
-			case "App_Matchmaking":
-				self.show_frame(App_Matchmaking)
-			case "App_Multi":
-				self.show_frame(App_Multi)
+		match text_frame:
+			case "AppMain":
+				self.show_frame(AppMain)
+			case "AppSolo":
+				self.show_frame(AppSolo)
+			case "AppMatchmaking":
+				self.show_frame(AppMatchmaking)
+			case "AppMulti":
+				self.show_frame(AppMulti)
 
 
 	def on_close(self) -> None:
 		"""Ferme la fenêtre ET LES THREADS quand on ferme la fenêtre"""
 		self.destroy()
-		sys.exit() # Première tentative de fermeture (soft)
-		os._exit(1) # Deuxième tentative de fermeture (hard, en cas de crash)
+		sys.exit()
 
 
 	def send_event(self, event: str) -> None:

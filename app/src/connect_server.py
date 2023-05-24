@@ -1,8 +1,30 @@
-import requests
+"""
+Connexion au serveur
+===========
+
+Ce module contient les fonctions pour se connecter au serveur distant et envoyer des requêtes
+
+Contenu :
+---------
+- send: Envoi une requête vers le serveur, méthode privée utilisée via des interfaces
+- user_connection: Envoi une demande de connection/création d'utilisateur au serveur
+- join_matchmaking: Envoi une demande pour rejoindre le service de matchmaking au serveur
+- leave_matchmaking: Envoi une demande pour quitter le service de matchmaking au serveur
+- query_sentence: Envoi une demande au serveur pour obtenir une phrase pour le jeu selon la difficulté
+- set_score: Envoi une demande de changement de score au serveur
+- retrieve_data: Récupère actuelles les données d'une partie
+
+"""
+
+
+
 import json
+import requests
 
 from src.utils import User
 from src.utils import export_gamemodes
+
+
 
 # La base de donnée est gérée côté serveur, en JS, afin de :
 # - Pouvoir gérer les autorisations des utilisateurs ayant accès au code source
@@ -24,13 +46,13 @@ def send(req: str, user: User, data: dict) -> requests.models.Response:
 	url = "http://keyboard-master.vercel.app" + "/api/send"
 
 	# Si pas d'utilisateur, on envoi "null"
-	if user == None:
+	if user is None:
 		user_pack = "null"
 	else:
 		user_pack = json.dumps({"name": user.name, "hashedPwd": user.hashed_password})
 
 	# Si pas de données, on envoi "null"
-	if data == None:
+	if data is None:
 		data = "null"
 
 	# On met tout dans un paquet pour l'envoi
@@ -41,7 +63,7 @@ def send(req: str, user: User, data: dict) -> requests.models.Response:
 	}
 
 	# On envoi la requête et la retourne
-	response = requests.post(url, data=pack)
+	response = requests.post(url, data=pack, timeout=10)
 	return response
 
 
@@ -67,7 +89,7 @@ def user_connection(is_new: bool, name: str, raw_password: str) -> User or None:
 	# Si le serveur renvoi "Denied", ou qu'il y a une erreur, on renvoi None
 	if res.text == "Denied" or res.status_code != 201:
 		return None
-	
+
 	# Sinon, on renvoi un objet User
 	return User(name=name, hashed_password=res.text)
 
@@ -118,7 +140,7 @@ def query_sentence(gamemodes: list) -> str:
 
 
 
-def set_score(user: User, gameID: int, score: int) -> bool:
+def set_score(user: User, game_id: int, score: int) -> bool:
 	"""Envoi une demande de changement de score au serveur\n
 
 	Args:
@@ -129,13 +151,13 @@ def set_score(user: User, gameID: int, score: int) -> bool:
 	Returns:
 		bool: True si demande acceptée par le serveur, sinon False\n
 	"""
-	data = json.dumps({"gameID": gameID, "score": score})
+	data = json.dumps({"gameID": game_id, "score": score})
 	res = send(req="SetMyScore", user=user, data=data)
 	return res.text == "Allowed" # Renvoi true ou false selon si la demande a été acceptée
 
 
 
-def retrieve_data(user: User, gameID: int) -> dict:
+def retrieve_data(user: User, game_id: int) -> dict:
 	"""Récupère actuelles les données d'une partie\n
 
 	Args:
@@ -145,8 +167,8 @@ def retrieve_data(user: User, gameID: int) -> dict:
 	Returns:
 		dict: Données récupérées\n
 	"""
-	data = json.dumps({"gameID": gameID})
+	data = json.dumps({"gameID": game_id})
 	res = send(req="RetrieveData", user=user, data=data)
 	res = json.loads(res.text)
-	res["gameID"] = gameID
+	res["gameID"] = game_id
 	return res # Renvoi les données récupérées
