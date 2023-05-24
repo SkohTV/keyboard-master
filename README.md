@@ -15,7 +15,7 @@
 
 ## Structure du projet
 
-``
+```
 ├── README.md             # Documentation du projet (vous êtes ico)
 ├── .editorconfig         # Configuration de l'éditeur de texte
 ├── .gitignore            # Fichier à ignorer pour git
@@ -31,6 +31,7 @@
     └── src/              # Scripts additionnels JavaScript
         └── models/       # Models pour la database MongoDB Atlas
 ```
+
 <br>
 
 
