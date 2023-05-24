@@ -1,4 +1,3 @@
-import sys
 import time
 import tkinter as tk
 import tkinter.ttk as ttk
