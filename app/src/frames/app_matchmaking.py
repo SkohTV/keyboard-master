@@ -145,6 +145,7 @@ class AppMatchmaking(tk.Frame):
 
 	def reset(self) -> None:
 		"""Fonction de reset pour remettre la fenêtre dans un état initial"""
+		self.thread = False
 		leave(self.controller.user)
 		self.label_hello["text"] = "Lancez une recherche pour commencer"
 		self.query_button["text"] = "Rejoindre le matchmaking"
