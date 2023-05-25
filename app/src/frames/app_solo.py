@@ -128,10 +128,10 @@ class AppSolo(tk.Frame, WrapListener):
 	def update_score(self) -> None:
 		"""Tous les 0.25s, on update notre score"""
 		while self.thread: # On update tant que self.thread = True
-			time.sleep(0.25)
 			self.current_time = time.time()
 			if (not self.start_time is None) and (not self.current_time is None) and (self.written): # On affiche le texte que si le temps est calculable
 				self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
+			time.sleep(0.25)
 		if (not self.start_time is None) and (not self.current_time is None) and (self.written):
 			self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
 

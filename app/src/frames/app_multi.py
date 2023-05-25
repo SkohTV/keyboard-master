@@ -126,6 +126,9 @@ class AppMulti(tk.Frame, WrapListener):
 				val = 0 if not self.start_time else round(len(self.written) / (time.time() - self.start_time), 3) * 1000 # Valeur à envoyer
 				score(self.controller.user, self.controller.match_res["gameID"], val) # On envoi notre score ici
 			time.sleep(0.25)
+		if (not self.start_time is None) and (not self.current_time is None) and (self.written):
+			score(self.controller.user, self.controller.match_res["gameID"], val) # On envoi notre score ici
+			self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
 
 
 
