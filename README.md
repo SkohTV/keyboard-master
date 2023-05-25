@@ -16,7 +16,7 @@
 ## Structure du projet
 
 ```
-├── README.md             # Documentation du projet (vous êtes ico)
+├── README.md             # Documentation du projet (vous êtes ici)
 ├── .editorconfig         # Configuration de l'éditeur de texte
 ├── .gitignore            # Fichier à ignorer pour git
 ├── app/                  # Directoire pour l'application Python 
