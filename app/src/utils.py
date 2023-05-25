@@ -72,10 +72,12 @@ class WrapListener():
 		self.written = []
 		self.sentence = ""
 		self.label_hello = None
+		self.label_you = None
 		self.text_entry = None
 		self.start_time = None
 		self.current_time = None
 		self.thread = None
+		self.controller = None
 
 
 	@threaded
@@ -134,8 +136,9 @@ class WrapListener():
 					if elem == self.written[index]:
 						wrong -= 1
 				if wrong == 0:
-					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
 					self.thread = False
+					self.label_hello.config(text=f"Votre score est de : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
+					self.label_you.configure(text=f"{self.controller.user.name} : {len(self.written) / (self.current_time - self.start_time) : .3f}cps")
 
 		# On crée un listener, pour écouter les touches
 		with keyboard.Listener(on_press=on_press) as listener:

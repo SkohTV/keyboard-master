@@ -75,7 +75,7 @@ class AppMatchmaking(tk.Frame):
 		self.gamemodes_array = []
 
 		# On peuple self.gamemodes_var et self.gamemodes_array avec les modes de jeu
-		for index, elem in enumerate(("easy", "insane")):
+		for index, elem in enumerate(("short", "easy", "hard", "insane", "english")):
 			self.gamemodes_var.append(tk.BooleanVar())
 			self.gamemodes_array.append(ttk.Checkbutton(frame3, text=elem, variable=self.gamemodes_var[index], onvalue=True, offvalue=False))
 
